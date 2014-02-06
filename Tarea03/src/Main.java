@@ -19,13 +19,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
+import java.util.LinkedList;
 
 public class Main extends Applet implements Runnable, MouseListener,
         MouseMotionListener {
 
     private static final long serialVersionUID = 1L;
     // Se declaran las variables.
-    private int vidas;    // vidas del planeta.
+   
     private final int MIN = -5;    //Rango minimo al generar un numero al azar.
     private final int MAX = 6;    //Rango maximo al generar un numero al azar.
     private Image dbImage;    // Imagen a proyectar
@@ -40,6 +41,12 @@ public class Main extends Applet implements Runnable, MouseListener,
     private int difPosY;
     private int mousePosX;
     private int mousePosY;
+    private LinkedList Asteroides;
+    private int cantAsteroides;
+    private int incrementoVelocidad;
+    private int vidas;    // vidas del planeta.
+    private int marcador;
+    
 
     /**
      * Metodo <I>init</I> sobrescrito de la clase <code>Applet</code>.<P>
@@ -47,21 +54,32 @@ public class Main extends Applet implements Runnable, MouseListener,
      * usarse en el <code>Applet</code> y se definen funcionalidades.
      */
     public void init() {
-        resize(800, 500);
+        resize(1100, 800);
         planetClicked = false; //Boolean que controla si el mouse apreta el planeta
         vidas = 5;    // Le asignamos un valor inicial a las vidas
-        
+        incrementoVelocidad=1;
+        marcador=0;
         int posX = (int) (Math.random() * (getWidth() / 4));    // posicion en x es un cuarto del applet
         int posY = (int) (Math.random() * (getHeight() / 4));    // posicion en y es un cuarto del applet
         URL eURL = this.getClass().getResource("images/earth.png");
         earth = new Planeta(posX, posY, Toolkit.getDefaultToolkit().getImage(eURL));
         
-        int posrX = (int) (Math.random() * (getWidth() / 4)) + getWidth() / 2;    //posision x es tres cuartos del applet
-        int posrY = (int) (Math.random() * (getHeight() / 4)) + getHeight() / 2;    //posision y es tres cuartos del applet
+    
         URL rURL = this.getClass().getResource("images/asteroid.png");
-        Aarhus = new Asteroide(posrX, posrY, Toolkit.getDefaultToolkit().getImage(rURL), 1);
-        Aarhus.setPosX(Aarhus.getPosX() - Aarhus.getAncho());
-        Aarhus.setPosY(Aarhus.getPosY() - Aarhus.getAlto());
+        
+       //Create Asteroids Aarhus
+        Asteroides = new LinkedList();
+        cantAsteroides = (int) (Math.random() * 5) + 5;
+        int i = 0;
+        while (i < cantAsteroides) {
+            int posrX = (int) (Math.random() * (getWidth()-(getWidth()/2)));
+            Aarhus = new Asteroide(posrX, 0, Toolkit.getDefaultToolkit().getImage(rURL));
+            Aarhus.setPosX((int) (Math.random() * (getWidth()-Aarhus.getAncho())));
+            Aarhus.setPosY(0-i*80);
+            Asteroides.add(Aarhus);
+            i++;
+        }
+        
         
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -72,7 +90,7 @@ public class Main extends Applet implements Runnable, MouseListener,
         URL goURL = this.getClass().getResource("images/gameover.jpg");
         gameover = Toolkit.getDefaultToolkit().getImage(goURL);
 
-        URL bgURL = this.getClass().getResource("images/spaceStar.jpg");
+        URL bgURL = this.getClass().getResource("images/galaxy.jpg");
         background = Toolkit.getDefaultToolkit().getImage(bgURL);
     }
 
@@ -121,9 +139,15 @@ public class Main extends Applet implements Runnable, MouseListener,
     public void actualiza() {
 
         //Acutaliza la posicion del asteroide dependiendo donde este el planeta
-       
 
-            Aarhus.setPosY(Aarhus.getPosY() + Aarhus.getincrementoVel());
+             for (int i = 0; i < Asteroides.size(); i++) {
+            Asteroide temp = (Asteroide) Asteroides.get(i);
+            //Acutalizo la posicion del raton
+            temp.setPosY(temp.getPosY() + incrementoVelocidad);
+          
+
+        }
+
     
     }
 
@@ -149,21 +173,28 @@ public class Main extends Applet implements Runnable, MouseListener,
 
         //checa colision de asteroide Aarhus con el applet
         if (Aarhus.getPosX() + Aarhus.getAncho() > getWidth()) {
-            Aarhus.setPosX(Aarhus.getPosX() - Aarhus.getincrementoVel());
+            Aarhus.setPosX(Aarhus.getPosX() - incrementoVelocidad);
 
         }
         if (Aarhus.getPosX() < 0) {
-            Aarhus.setPosX(Aarhus.getPosX() - Aarhus.getincrementoVel());
+            Aarhus.setPosX(Aarhus.getPosX() - incrementoVelocidad);
 
         }
-        if (Aarhus.getPosY() + Aarhus.getAlto() > getHeight()) {
-            Aarhus.setPosY(0);
-            if (vidas > 0) {
-                vidas--;
-                Aarhus.setincrementoVel(Aarhus.getincrementoVel() + 2);
-                planetClicked = false;
+
+        for (int i = 0; i < Asteroides.size(); i++) {
+            Asteroide temp = (Asteroide) Asteroides.get(i);
+            if (temp.getPosY() + temp.getAlto() > getHeight()) {
+                temp.setPosY(0-i*50);
+                temp.setPosX((int) (Math.random() * (getWidth()-temp.getAncho())));
+                if (vidas > 0) {
+                    //vidas--;
+                    incrementoVelocidad += 0;
+                    planetClicked = false;
+                }
             }
         }
+
+      
 
 
         //Colision entre objetos
@@ -220,13 +251,16 @@ public class Main extends Applet implements Runnable, MouseListener,
                 g.drawImage(background, 0, 0, this);
                 //Dibuja los string de vidas y puntos // X,Y
                 g.setColor(Color.white);
-                g.setFont(new Font("Arial",Font.BOLD,20));
-                g.drawString("Puntos:", 650, 20);
-                g.drawString("Vidas: "+vidas, 650, 60);
+                g.setFont(new Font("Avenir Black",Font.BOLD,18));
+                g.drawString("Puntos:", 950, 20);
+                g.drawString("Vidas: "+vidas, 950, 60);
                 //Dibuja la imagen en la posicion actualizada
                 g.drawImage(earth.getImagenI(), earth.getPosX(), earth.getPosY(), this);
-                g.drawImage(Aarhus.getImagenI(), Aarhus.getPosX(), Aarhus.getPosY(), this);
-
+             for ( int i=0; i<Asteroides.size();i++ ) {
+                Asteroide temp = (Asteroide) Asteroides.get(i);
+                g.drawImage(temp.getImagenI(), temp.getPosX(), temp.getPosY(), this);
+               
+            }
             } else {
                 //Da un mensaje mientras se carga el dibujo	
                 g.drawString("No se cargo la imagen..", 20, 20);
