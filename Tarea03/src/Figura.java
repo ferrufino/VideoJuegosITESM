@@ -122,27 +122,37 @@ public class Figura {
         return new Rectangle(getPosX(), getPosY(), getAncho(), getAlto());
     }
 
+
+
     /**
-     * Checa si el objeto <code>Figura</code> intersecta a otro
-     * <code>Figura</code>
+     * Checa si el objeto <code>Figura</code> intersecta con una coordenadas
      *
      * @return un valor boleano <code>true</code> si lo intersecta
      * <code>false</code> en caso contrario
      */
-    public boolean intersecta(Figura obj) {
-        return getPerimetro().intersects(obj.getPerimetro());
-    }
-
     public boolean intersectaPuntos(int X, int Y) {
         return getPerimetro().contains(X, Y);
     }
 
-    public Rectangle getImpacto() {
-        return new Rectangle(getPosX()+10 , getPosY() + getAlto(), getAncho()-20, 1);
+    /**
+     * Metodo de acceso que regresa un nuevo rectangulo
+     *
+     * @return un objeto de la clase <code>Rectangle</code> que es el perimetro
+     * del rectangulo Creado como base de la <code>Figura</code> Asteroide
+     */
+    public Rectangle getParamRec() {
+        return new Rectangle(getPosX() + 10, getPosY() + getAlto(), getAncho() - 20, 1);
     }
 
-    public boolean intersectaImpacto(Planeta obj) {
-        return getImpacto().intersects(obj.getPerimetro());
+    /**
+     * Checa si el objeto <code>Figura</code> intersecta con una <code> Figura
+     * </code>
+     *
+     * @return un valor boleano <code>true</code> si lo intersecta
+     * <code>false</code> en caso contrario
+     */
+    public boolean intersecta(Planeta obj) {
+        return getParamRec().intersects(obj.getPerimetro());
     }
 
 }

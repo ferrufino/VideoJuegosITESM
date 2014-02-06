@@ -202,7 +202,7 @@ public class Main extends Applet implements Runnable, MouseListener,
         //Colision entre objetos
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
-            if (temp.intersectaImpacto(earth) && draggedUp) {
+            if (temp.intersecta(earth) && draggedUp) {
 
                 bomb.play();    //sonido al colisionar
                 marcador += 100;
@@ -313,7 +313,7 @@ public class Main extends Applet implements Runnable, MouseListener,
      * soltar el boton
      */
     public void mouseClicked(MouseEvent e) {
-        draggedUp=true;
+       // draggedUp=true;
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -347,7 +347,7 @@ public class Main extends Applet implements Runnable, MouseListener,
             earth.setPosY(earth.getPosY() + (e.getY() - mousePosY));
             mousePosX = e.getX();
             mousePosY = e.getY();
-            if ((AntiguaPosY > mousePosY) && (!(mousePosX>AntiguaPosX+50) ||!(mousePosX<AntiguaPosX-50)) ) {  
+            if ((AntiguaPosY > mousePosY) && (!(mousePosX>AntiguaPosX+100) ||!(mousePosX<AntiguaPosX-100)) ) {  
                 draggedUp = true;
             }  else{
                 draggedUp = false;
