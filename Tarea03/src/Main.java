@@ -33,7 +33,8 @@ public class Main extends Applet implements Runnable, MouseListener,
     private Image gameover;    //Imagen a desplegar al acabar el juego.
     private Image background;    //Imagen a desplegar de fondo de applet
     private Graphics dbg;	// Objeto grafico
-    private AudioClip bomb;    //Objeto AudioClip 
+    private AudioClip bomb;    //Objeto AudioClip cuando choca asteroide y planeta
+    private AudioClip buzzer;
     private Planeta earth;    // Objeto de la clase Planeta
     private Asteroide Aarhus;    //Objeto de la clase asteroide
     private boolean planetClicked; //bool si el mouse fue presionado
@@ -68,13 +69,13 @@ public class Main extends Applet implements Runnable, MouseListener,
         
        //Create Asteroids Aarhus
         Asteroides = new LinkedList();
-        cantAsteroides = (int) (Math.random() * 10) + 10;
+        cantAsteroides = (int) (Math.random() * 5) + 10;
         int i = 0;
         while (i < cantAsteroides) {
             int posrX = (int) (Math.random() * (getWidth()-(getWidth()/2)));
             Aarhus = new Asteroide(posrX, 0, Toolkit.getDefaultToolkit().getImage(rURL));
             Aarhus.setPosX((int) (Math.random() * (getWidth()-Aarhus.getAncho())));
-            Aarhus.setPosY(0-i*100);
+            Aarhus.setPosY((0)-i*100);
             Asteroides.add(Aarhus);
             i++;
         }
@@ -85,6 +86,8 @@ public class Main extends Applet implements Runnable, MouseListener,
         //Se carga el sonido.
         URL baURL = this.getClass().getResource("sounds/bubibom.wav");
         bomb = getAudioClip(baURL);
+        URL buURL = this.getClass().getResource("sounds/fail-buzzer-03.wav");
+        buzzer = getAudioClip(buURL);
         //Se carga las imagenes
         URL goURL = this.getClass().getResource("images/gameover.jpg");
         gameover = Toolkit.getDefaultToolkit().getImage(goURL);
@@ -170,20 +173,14 @@ public class Main extends Applet implements Runnable, MouseListener,
             earth.setPosY(0);
         }
 
-        //checa colision de asteroide Aarhus con el applet
-        if (Aarhus.getPosX() + Aarhus.getAncho() > getWidth()) {
-            Aarhus.setPosX(Aarhus.getPosX() - incrementoVelocidad);
+        //checa colision de asteroides con el applet
 
-        }
-        if (Aarhus.getPosX() < 0) {
-            Aarhus.setPosX(Aarhus.getPosX() - incrementoVelocidad);
-
-        }
 
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
             if (temp.getPosY() + temp.getAlto() > getHeight()) {
-                temp.setPosY(0-i*100);
+                buzzer.play();
+                temp.setPosY((-100)-i*100);
                 temp.setPosX((int) (Math.random() * (getWidth()-temp.getAncho())));
                 if (vidas > 0) {
                     contadorPerdidas++;
@@ -212,7 +209,7 @@ public class Main extends Applet implements Runnable, MouseListener,
                 marcador+=100;
                 //El asteroide se mueve al azar en la mitad derecha del appler.
                 temp.setPosX((int) (Math.random() * getWidth() / 2) + getWidth() / 2 - temp.getAncho());
-                temp.setPosY(0);
+                temp.setPosY((-100)-i*100);
               
 
             }
@@ -277,6 +274,9 @@ public class Main extends Applet implements Runnable, MouseListener,
             }
         } else {
             g.drawImage(gameover, 0, 0, this);
+            g.setColor(Color.white);
+            g.setFont(new Font("Avenir Black",Font.BOLD,40));
+            g.drawString("Puntos: "+marcador, 400, 650);
         }
     }
     
