@@ -49,10 +49,9 @@ public class Main extends Applet implements Runnable, MouseListener,
     private int vidas;    // vidas del planeta.
     private int marcador; // puntos
     private int contadorPerdidas; //Contador de cuantos asteroides tocan la base
-    private boolean draggedUp;
-    private boolean dragging;
-    private int AntiguaPosY;
-    private int AntiguaPosX;
+    private boolean draggedUp;  //El mouse se esta arrastrando hacia arriba
+    private int AntiguaPosY; //Pasada posicion de Y
+    private int AntiguaPosX; // Pasada posicion de X
 
     /**
      * Metodo <I>init</I> sobrescrito de la clase <code>Applet</code>.<P>
@@ -61,18 +60,18 @@ public class Main extends Applet implements Runnable, MouseListener,
      */
     public void init() {
         resize(1100, 800);
-        draggedUp=false;
-        dragging=false;
-        AntiguaPosY=0;
-        AntiguaPosX=0;
+        draggedUp = false;
+        AntiguaPosY = 0;
+        AntiguaPosX = 0;
         planetClicked = false; //Boolean que controla si el mouse apreta el planeta
         vidas = 5;    // Le asignamos un valor inicial a las vidas
-        incrementoVelocidad = 1;
-        marcador = 0;
+        incrementoVelocidad = 1; // variable que controla la velocidad 
+        //de los asteroides
+        marcador = 0; //Cuantos puntos el usuario lleva (Asteroides elminidados)
         URL eURL = this.getClass().getResource("images/earth.png");
         earth = new Planeta(450, 650, Toolkit.getDefaultToolkit().getImage(eURL));
 
-        contadorPerdidas = 0;
+        contadorPerdidas = 0; // Si llega a 10  quita una vida 
         URL rURL = this.getClass().getResource("images/asteroid.png");
 
         //Create Asteroids Aarhus
@@ -84,7 +83,7 @@ public class Main extends Applet implements Runnable, MouseListener,
             Aarhus = new Asteroide(posrX, 0, Toolkit.getDefaultToolkit().getImage(rURL));
             Aarhus.setPosX((int) (Math.random() * (getWidth() - Aarhus.getAncho())));
             Aarhus.setPosY((0) - i * 100);
-          
+
             Asteroides.add(Aarhus);
             i++;
         }
@@ -264,7 +263,6 @@ public class Main extends Applet implements Runnable, MouseListener,
                 for (int i = 0; i < Asteroides.size(); i++) {
                     Asteroide temp = (Asteroide) Asteroides.get(i);
                     g.drawImage(temp.getImagenI(), temp.getPosX(), temp.getPosY(), this);
-                    
 
                 }
             } else {
@@ -275,7 +273,9 @@ public class Main extends Applet implements Runnable, MouseListener,
             g.drawImage(gameover, 0, 0, this);
             g.setColor(Color.white);
             g.setFont(new Font("Avenir Black", Font.BOLD, 40));
-            if(marcador<0){marcador=0;}
+            if (marcador < 0) {
+                marcador = 0;
+            }
             g.drawString("Puntos: " + marcador, 400, 650);
         }
     }
@@ -289,7 +289,7 @@ public class Main extends Applet implements Runnable, MouseListener,
      * @param e es el <code>evento</code> que se genera en apretar el boton
      */
     public void mousePressed(MouseEvent e) {
-        
+
         mousePosX = e.getX();
         mousePosY = e.getY();
         if (earth.intersectaPuntos(e.getX(), e.getY())) {
@@ -297,9 +297,7 @@ public class Main extends Applet implements Runnable, MouseListener,
             difPosY = earth.getPosY() - e.getY();
             planetClicked = true;
             draggedUp = true;
-        } 
-        
-        
+        }
 
     }
 
@@ -313,8 +311,7 @@ public class Main extends Applet implements Runnable, MouseListener,
      * soltar el boton
      */
     public void mouseClicked(MouseEvent e) {
-       // draggedUp=true;
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -325,7 +322,6 @@ public class Main extends Applet implements Runnable, MouseListener,
      *
      * @param e es el <code>evento</code> que se genera en soltar el boton
      */
-
     public void mouseReleased(MouseEvent e) {
         planetClicked = false;
         draggedUp = false;
@@ -347,14 +343,13 @@ public class Main extends Applet implements Runnable, MouseListener,
             earth.setPosY(earth.getPosY() + (e.getY() - mousePosY));
             mousePosX = e.getX();
             mousePosY = e.getY();
-            if ((AntiguaPosY > mousePosY) && (!(mousePosX>AntiguaPosX+100) ||!(mousePosX<AntiguaPosX-100)) ) {  
+            if ((AntiguaPosY > mousePosY) && (!(mousePosX > AntiguaPosX + 100) || !(mousePosX < AntiguaPosX - 100))) {
                 draggedUp = true;
-            }  else{
+            } else {
                 draggedUp = false;
             }
-            
+
         }
-       
 
     }
 
@@ -390,8 +385,5 @@ public class Main extends Applet implements Runnable, MouseListener,
     public void mouseMoved(MouseEvent e) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
-   
 
 }
