@@ -45,7 +45,8 @@ public class Main extends Applet implements Runnable, MouseListener,
     private int cantAsteroides;
     private int incrementoVelocidad;
     private int vidas;    // vidas del planeta.
-    private int marcador;
+    private int marcador; // puntos
+    private int contadorPerdidas; //Contador de cuantos asteroides tocan la base
     
 
     /**
@@ -64,7 +65,7 @@ public class Main extends Applet implements Runnable, MouseListener,
         URL eURL = this.getClass().getResource("images/earth.png");
         earth = new Planeta(posX, posY, Toolkit.getDefaultToolkit().getImage(eURL));
         
-    
+        contadorPerdidas=0;
         URL rURL = this.getClass().getResource("images/asteroid.png");
         
        //Create Asteroids Aarhus
@@ -84,7 +85,7 @@ public class Main extends Applet implements Runnable, MouseListener,
         addMouseListener(this);
         addMouseMotionListener(this);
         //Se carga el sonido.
-        URL baURL = this.getClass().getResource("sounds/Explosion.wav");
+        URL baURL = this.getClass().getResource("sounds/bubibom.wav");
         bomb = getAudioClip(baURL);
         //Se carga las imagenes
         URL goURL = this.getClass().getResource("images/gameover.jpg");
@@ -187,10 +188,15 @@ public class Main extends Applet implements Runnable, MouseListener,
                 temp.setPosY(0-i*100);
                 temp.setPosX((int) (Math.random() * (getWidth()-temp.getAncho())));
                 if (vidas > 0) {
+                    contadorPerdidas++;
+                    if(contadorPerdidas==10){
                     vidas--;
+                    incrementoVelocidad += 1;
+                    }
+                    
                     marcador-=20;
-                    incrementoVelocidad += 0;
-                    planetClicked = false;
+                   
+                   
                 }
             }
         }
@@ -202,13 +208,16 @@ public class Main extends Applet implements Runnable, MouseListener,
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
             if (earth.intersecta(temp)) {
+                planetClicked = false;
                 bomb.play();    //sonido al colisionar
+                marcador+=100;
                 //El planeta se mueve al azar en la mitad izquierda del applet.
                 earth.setPosX((int) (Math.random() * (getWidth() - earth.getAncho())));
                 earth.setPosY((int) (Math.random() * (getHeight() / 2 - earth.getAlto())));
                 //El asteroide se mueve al azar en la mitad derecha del appler.
                 temp.setPosX((int) (Math.random() * getWidth() / 2) + getWidth() / 2 - temp.getAncho());
                 temp.setPosY(0);
+              
 
             }
         }
@@ -257,7 +266,7 @@ public class Main extends Applet implements Runnable, MouseListener,
                 //Dibuja los string de vidas y puntos // X,Y
                 g.setColor(Color.white);
                 g.setFont(new Font("Avenir Black",Font.BOLD,18));
-                g.drawString("Puntos:", 950, 20);
+                g.drawString("Puntos: "+marcador, 950, 20);
                 g.drawString("Vidas: "+vidas, 950, 60);
                 //Dibuja la imagen en la posicion actualizada
                 g.drawImage(earth.getImagenI(), earth.getPosX(), earth.getPosY(), this);
