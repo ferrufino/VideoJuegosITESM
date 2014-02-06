@@ -60,10 +60,8 @@ public class Main extends Applet implements Runnable, MouseListener,
         vidas = 5;    // Le asignamos un valor inicial a las vidas
         incrementoVelocidad=1;
         marcador=0;
-        int posX = (int) (Math.random() * (getWidth() / 4));    // posicion en x es un cuarto del applet
-        int posY = (int) (Math.random() * (getHeight() / 4));    // posicion en y es un cuarto del applet
         URL eURL = this.getClass().getResource("images/earth.png");
-        earth = new Planeta(posX, posY, Toolkit.getDefaultToolkit().getImage(eURL));
+        earth = new Planeta(450, 650, Toolkit.getDefaultToolkit().getImage(eURL));
         
         contadorPerdidas=0;
         URL rURL = this.getClass().getResource("images/asteroid.png");
@@ -192,6 +190,7 @@ public class Main extends Applet implements Runnable, MouseListener,
                     if(contadorPerdidas==10){
                     vidas--;
                     incrementoVelocidad += 1;
+                    contadorPerdidas=0;
                     }
                     
                     marcador-=20;
@@ -208,12 +207,9 @@ public class Main extends Applet implements Runnable, MouseListener,
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
             if (earth.intersecta(temp)) {
-                planetClicked = false;
+
                 bomb.play();    //sonido al colisionar
                 marcador+=100;
-                //El planeta se mueve al azar en la mitad izquierda del applet.
-                earth.setPosX((int) (Math.random() * (getWidth() - earth.getAncho())));
-                earth.setPosY((int) (Math.random() * (getHeight() / 2 - earth.getAlto())));
                 //El asteroide se mueve al azar en la mitad derecha del appler.
                 temp.setPosX((int) (Math.random() * getWidth() / 2) + getWidth() / 2 - temp.getAncho());
                 temp.setPosY(0);
