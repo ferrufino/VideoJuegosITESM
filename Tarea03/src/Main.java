@@ -69,13 +69,13 @@ public class Main extends Applet implements Runnable, MouseListener,
         
        //Create Asteroids Aarhus
         Asteroides = new LinkedList();
-        cantAsteroides = (int) (Math.random() * 5) + 5;
+        cantAsteroides = (int) (Math.random() * 10) + 10;
         int i = 0;
         while (i < cantAsteroides) {
             int posrX = (int) (Math.random() * (getWidth()-(getWidth()/2)));
             Aarhus = new Asteroide(posrX, 0, Toolkit.getDefaultToolkit().getImage(rURL));
             Aarhus.setPosX((int) (Math.random() * (getWidth()-Aarhus.getAncho())));
-            Aarhus.setPosY(0-i*80);
+            Aarhus.setPosY(0-i*100);
             Asteroides.add(Aarhus);
             i++;
         }
@@ -184,10 +184,11 @@ public class Main extends Applet implements Runnable, MouseListener,
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
             if (temp.getPosY() + temp.getAlto() > getHeight()) {
-                temp.setPosY(0-i*50);
+                temp.setPosY(0-i*100);
                 temp.setPosX((int) (Math.random() * (getWidth()-temp.getAncho())));
                 if (vidas > 0) {
-                    //vidas--;
+                    vidas--;
+                    marcador-=20;
                     incrementoVelocidad += 0;
                     planetClicked = false;
                 }
@@ -198,16 +199,20 @@ public class Main extends Applet implements Runnable, MouseListener,
 
 
         //Colision entre objetos
-        if (earth.intersecta(Aarhus)) {
-            bomb.play();    //sonido al colisionar
-            //El planeta se mueve al azar en la mitad izquierda del applet.
-            earth.setPosX((int) (Math.random() * (getWidth() - earth.getAncho())));
-            earth.setPosY((int) (Math.random() * (getHeight()/2  - earth.getAlto())));
-            //El asteroide se mueve al azar en la mitad derecha del appler.
-            Aarhus.setPosX((int) (Math.random() * getWidth() / 2) + getWidth() / 2 - Aarhus.getAncho());
-            Aarhus.setPosY(0);
-           
+        for (int i = 0; i < Asteroides.size(); i++) {
+            Asteroide temp = (Asteroide) Asteroides.get(i);
+            if (earth.intersecta(temp)) {
+                bomb.play();    //sonido al colisionar
+                //El planeta se mueve al azar en la mitad izquierda del applet.
+                earth.setPosX((int) (Math.random() * (getWidth() - earth.getAncho())));
+                earth.setPosY((int) (Math.random() * (getHeight() / 2 - earth.getAlto())));
+                //El asteroide se mueve al azar en la mitad derecha del appler.
+                temp.setPosX((int) (Math.random() * getWidth() / 2) + getWidth() / 2 - temp.getAncho());
+                temp.setPosY(0);
+
+            }
         }
+
     }
 
     /**
