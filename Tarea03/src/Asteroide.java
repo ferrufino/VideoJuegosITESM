@@ -11,9 +11,6 @@ import java.applet.*;
 
 public class Asteroide extends Figura {
 
-    int recX; //Pos x del rectangulo
-    int recY; //Pos Y del rectangulo	
-    Rectangle r1;
 
     /**
      * Metodo constructor que hereda los atributos de la clase
@@ -29,29 +26,8 @@ public class Asteroide extends Figura {
 
     }
 
-    public void setRecX(int x) {
-        recX = x;
-    }
-
-    public int getRecX() {
-        return recX;
-    }
-
-    public void setRecY(int x) {
-        recY = x;
-    }
-
-    public int getRecY() {
-        return recY;
-    }
-
-    public void buildRec(int altura, int ancho) {
-        r1 = new Rectangle(posX + 10, posY + altura - 10, ancho - 10, altura / 10);
-    }
-
-    public boolean intersectaAbajo(Figura obj) {
-        return r1.intersects(obj.getPerimetro());
-    }
+   
+    
 }
 
 
