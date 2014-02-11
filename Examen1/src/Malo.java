@@ -14,8 +14,8 @@ public class Malo extends Base{
 	 * @param posY es el <code>posiscion en y</code> del objeto planeta.
 	 * @param image es la <code>imagen</code> del objeto planeta.
 	 */
-	public Malo(int posX,int posY,Image image){
-		super(posX,posY,image);	
+	public Malo(int posX,int posY){
+		super(posX,posY);	
            
 	
         }
