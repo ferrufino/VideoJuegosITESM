@@ -1,43 +1,45 @@
 
-/**
- * Clase Malo
- *
- * @author Gustavo Ferrufino
- * @version 1.00 2008/6/13
- */
 import java.awt.Image;
+import java.awt.Toolkit;
 
 public class Malo extends Base {
 
-    static String CONTEO;
+    private static int conteo;
+    private int speed;
 
-    /**
-     * Metodo constructor que hereda los atributos de la clase
-     * <code>Figura</code>.
-     *
-     * @param posX es la <code>posiscion en x</code> del objeto planeta.
-     * @param posY es el <code>posiscion en y</code> del objeto planeta.
-     * @param image es la <code>imagen</code> del objeto planeta.
-     */
     public Malo(int posX, int posY) {
         super(posX, posY);
 
+        Image malo1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/bad_dog1.png"));
+        Image malo2 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/bad_dog2.png"));
+        Image malo3 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/bad_dog3.png"));
+        Image malo4 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/bad_dog4.png"));
+
+        
+        animacion = new Animacion();
+        animacion.sumaCuadro(malo1, 100);
+        animacion.sumaCuadro(malo2, 100);
+        animacion.sumaCuadro(malo3, 100);
+        animacion.sumaCuadro(malo4, 100);
+      
+        speed = (int) ((Math.random() * (9))+ 1);
     }
-    /**
-     * Metodo modificador usado para cambiar la posicion en x del objeto
-     *
-     * @param CONTEO es la <code>posicion en x</code> del objeto.
-     */
-    public void setConteo(String c) {
-        CONTEO = c;
+    
+
+    public static int getConteo() {
+        return conteo;
     }
 
-    /**
-     * Metodo modificador usado para cambiar la posicion en x del objeto
-     *
-     * @param CONTEO es la <code>posicion en x</code> del objeto.
-     */
-    public String getConteo() {
-        return CONTEO;
+    public static void setConteo(int cont) {
+        conteo = cont;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int vel) {
+        speed = vel;
     }
 }
+

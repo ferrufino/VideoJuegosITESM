@@ -1,105 +1,117 @@
 
 /**
- * @Examen1
+ * @(#)Colisiones.java
  *
- * Basado en el applet "Tarea02"
+ * Colisiones Applet application
  *
- *
- * @author Gustavo Ferrufino
- *
+ * @author Antonio Mejorado
+ * @version 1.00 2008/6/18
  */
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Font;
+import java.awt.Color;
 import java.awt.Toolkit;
-//import java.awt.event.MouseEvent;
-//import java.awt.event.MouseListener;
-//import java.awt.event.MouseMotionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.net.URL;
 import java.util.LinkedList;
-import java.awt.Rectangle;
+import java.awt.Point;
 
-public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
-        MouseMotionListener */ {
+public class AppletExamen1 extends Applet implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
     private static final long serialVersionUID = 1L;
-    // Se declaran las variables.
-
-    private final int MIN = -5;    //Rango minimo al generar un numero al azar.
-    private final int MAX = 6;    //Rango maximo al generar un numero al azar.
-    private Image dbImage;    // Imagen a proyectar
-    private Image gameover;    //Imagen a desplegar al acabar el juego.
-    private Image background;    //Imagen a desplegar de fondo de applet
+    // Se declaran las variables. 
+    private Image dbImage;	// Imagen a proyectar	
     private Graphics dbg;	// Objeto grafico
-    private AudioClip bomb;    //Objeto AudioClip cuando choca asteroide y planeta
-    private AudioClip buzzer;
-     private boolean planetClicked; //bool si el mouse fue presionado
-    private int difPosX;
-    private int difPosY;
-    private int mousePosX;
-    private int mousePosY;
-    private LinkedList Asteroides;
-    private int cantAsteroides;
-    private int incrementoVelocidad;
-    private int vidas;    // vidas del planeta.
-    private int marcador; // puntos
-    private int contadorPerdidas; //Contador de cuantos asteroides tocan la base
-    private boolean draggedUp;  //El mouse se esta arrastrando hacia arriba
-    private int AntiguaPosY; //Pasada posicion de Y
-    private int AntiguaPosX; // Pasada posicion de X
-    private Bueno cat;
+    private AudioClip sonido;    // Objeto AudioClip
+    private AudioClip rat;    // Objeto AudioClip
+    private AudioClip bomb;    //Objeto AudioClip 
+    private Bueno planeta;    // Objeto de la clase Elefante
+    private Malo raton;   //Objeto de la clase Raton
+    private LinkedList lista;           //lista de ratones
+    private int cant;               //cantidad de asteroides
+    private int mayor;
+    private int menor;
+    private boolean presionado;
+    private int coordenada_x;
+    private int coordenada_y;
+    private int off_x;
+    private int off_y;
+    private int vidas;
+    private Image game_over;
+    private int direccion;
+    private int posrX;
+    private int posrY;
+    private int score;
+    private int cont;
+    private int x_mayor;
+    private int x_menor;
+    private int y_mayor;
+    private int y_menor;
+    private boolean flag;
+    private boolean move;
+    private boolean pausa;
+    private long tiempoActual;
+    private long tiempoInicial;
+
     /**
      * Metodo <I>init</I> sobrescrito de la clase <code>Applet</code>.<P>
      * En este metodo se inizializan las variables o se crean los objetos a
      * usarse en el <code>Applet</code> y se definen funcionalidades.
      */
     public void init() {
-        resize(1100, 800);
-        draggedUp = false;
-        AntiguaPosY = 0;
-        AntiguaPosX = 0;
-        planetClicked = false; //Boolean que controla si el mouse apreta el planeta
-        vidas = 5;    // Le asignamos un valor inicial a las vidas
-        incrementoVelocidad = 1; // variable que controla la velocidad 
-        //de los asteroides
-        marcador = 0; //Cuantos puntos el usuario lleva (Asteroides elminidados)
-      
-        
-        
-        cat = new Bueno(450, 650);
+        pausa = false;
+        move = false;
+        this.setSize(800, 500);
+        direccion = 0;
+        menor = 0;                    //cantidad minima de asteroides que se generarán al azar
+        mayor = 10;                    //cantidad máxima de asteroides que se generarán al azar
+        score = 0;                    //puntaje inicial
+        vidas = 5;                    //vidaas iniciales
+        cont = 0;                     //contadaor que indica cuantos asteroides han golpeado el fondo del applet
+        x_mayor = (getWidth() - getWidth() / 10);           //posicion máxima en x que tendrán los asteroides
+        x_menor = 0;           //posicion mínima en x que tendrán los asteroides
+        y_mayor = -100;          //posicion máxima en y que tendrán los asteroides
+        y_menor = -200;        //posicion mínima en y que tendrán los asteroides
+        flag = false;
+        int posX = getWidth() / 2;              // posicion inicial del planeta en x
+        int posY = getHeight();             // posicion inicial del planeta en y
+        URL eURL = this.getClass().getResource("Images/frame_0_00.gif");
+        planeta = new Bueno(posX, posY);
 
-        contadorPerdidas = 0; // Si llega a 10  quita una vida 
-   /*
-        //Create Asteroids Aarhus
-        Asteroides = new LinkedList();
-        cantAsteroides = (int) (Math.random() * 5) + 10;
-        int i = 0;
-        while (i < cantAsteroides) {
-            int posrX = (int) (Math.random() * (getWidth() - (getWidth() / 2)));
-            Aarhus = new Asteroide(posrX, 0, Toolkit.getDefaultToolkit().getImage(rURL));
-            Aarhus.setPosX((int) (Math.random() * (getWidth() - Aarhus.getAncho())));
-            Aarhus.setPosY((0) - i * 100);
+        setBackground(Color.black);
+        addKeyListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        //Se cargan los sonidos.
 
-            Asteroides.add(Aarhus);
-            i++;
-        }
-*/
-        //addMouseListener(this);
-       // addMouseMotionListener(this);
-        //Se carga el sonido.
-        URL baURL = this.getClass().getResource("sounds/bubibom.wav");
+        URL beURL = this.getClass().getResource("sounds/boom.wav");
+        sonido = getAudioClip(beURL);
+        URL baURL = this.getClass().getResource("sounds/Explosion.wav");
         bomb = getAudioClip(baURL);
-        URL buURL = this.getClass().getResource("sounds/fail-buzzer-03.wav");
-        buzzer = getAudioClip(buURL);
-        //Se carga las imagenes
-        URL goURL = this.getClass().getResource("images/gameover.jpg");
-        gameover = Toolkit.getDefaultToolkit().getImage(goURL);
 
-        URL bgURL = this.getClass().getResource("images/galaxy.jpg");
-        background = Toolkit.getDefaultToolkit().getImage(bgURL);
+        lista = new LinkedList();
+
+        cant = 10;            //se crea la cantidad de asteroides al azar
+        while (cant != 0) {
+            posrX = ((int) (Math.random() * (x_mayor - x_menor))) + x_menor;     //se generarán los asteroides en posiciones aleatorias fuera del applet
+            posrY = ((int) (Math.random() * (y_mayor - y_menor))) + y_menor;
+            
+            raton = new Malo(posrX, posrY);
+            raton.setPosX(posrX);
+            raton.setPosY(posrY);
+            lista.add(raton);
+            cant--;
+        }
+        URL goURL = this.getClass().getResource("images/game_over.gif");
+        game_over = Toolkit.getDefaultToolkit().getImage(goURL);
+
     }
 
     /**
@@ -124,13 +136,13 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      */
     public void run() {
+        tiempoActual = System.currentTimeMillis();
         while (vidas > 0) {
-            actualiza();
-            checaColision();
-
-            // Se actualiza el <code>Applet</code> repintando el contenido.
-            repaint();
-
+            if (!pausa) {
+                actualiza();
+                checaColision();
+            }
+            repaint();    // Se actualiza el <code>Applet</code> repintando el contenido.
             try {
                 // El thread se duerme.
                 Thread.sleep(20);
@@ -141,77 +153,120 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
     }
 
     /**
-     * Metodo usado para actualizar la posicion de objetos planeta y asteroide.
+     * Metodo usado para actualizar la posicion de objetos elefante y raton.
      *
      */
     public void actualiza() {
-/*
-        //Acutaliza la posicion del asteroide dependiendo donde este el planeta
-        for (int i = 0; i < Asteroides.size(); i++) {
-            Asteroide temp = (Asteroide) Asteroides.get(i);
-            //Acutalizo la posicion del raton
-            temp.setPosY(temp.getPosY() + incrementoVelocidad);
 
+        if (cont >= 10) {                                   //cuando la cantidad de asteroides que golpearon el piso sea 10..
+            vidas--;                                    //las vidas decrementarán y la velocidad de los asteroides aumentará
+            cont = 0;                                     //la cantidad de asteroides volverá a ser 0
         }
-        */
+        long tiempoTranscurrido = System.currentTimeMillis() - tiempoActual;
+        tiempoActual += tiempoTranscurrido;
+        planeta.actualiza(tiempoTranscurrido);
+        raton.actualiza(tiempoTranscurrido);
+        
+        if (move) {
+            switch (direccion) {
+                case 3: {
 
-    }
+                    planeta.setPosX(planeta.getPosX() - 1);
+                    break; //se mueve hacia la izquierda
+                }
+                case 4: {
 
-    /**
-     * Metodo usado para checar las colisiones del objeto planeta y asteroide
-     * con las orillas del <code>Applet</code>.
-     */
-    public void checaColision() {
-        //Checa colision del planeta cat con el Applet
-
-        if (cat.getPosX() + cat.getAncho() > getWidth()) {
-            cat.setPosX(getWidth() - cat.getAncho());
-        }
-        if (cat.getPosX() < 0) {
-            cat.setPosX(0);
-        }
-        if (cat.getPosY() + cat.getAlto() > getHeight()) {
-            cat.setPosY(getHeight() - cat.getAlto());
-        }
-        if (cat.getPosY() < 0) {
-            cat.setPosY(0);
-        }
-/*
-        //checa colision de asteroides con el applet
-        for (int i = 0; i < Asteroides.size(); i++) {
-            Asteroide temp = (Asteroide) Asteroides.get(i);
-            if (temp.getPosY() + temp.getAlto() > getHeight()) {
-                buzzer.play();
-                temp.setPosY((-100) - i * 100);
-                temp.setPosX((int) (Math.random() * (getWidth() - temp.getAncho())));
-                if (vidas > 0) {
-                    contadorPerdidas++;
-                    if (contadorPerdidas == 10) {
-                        vidas--;
-                        incrementoVelocidad += 1;
-                        contadorPerdidas = 0;
-                    }
-
-                    marcador -= 20;
-
+                    planeta.setPosX(planeta.getPosX() + 1);
+                    break; //se mueve hacia la derecha
                 }
             }
         }
 
-        //Colision entre objetos
-        for (int i = 0; i < Asteroides.size(); i++) {
-            Asteroide temp = (Asteroide) Asteroides.get(i);
-            if (temp.intersecta(cat) && draggedUp) {
+        if (presionado) {                              //si la imagen sigue presionda, se actualizan las posiciones de x y de y
+            planeta.setPosY(coordenada_y - off_y);
+            planeta.setPosX(coordenada_x - off_x);
 
-                bomb.play();    //sonido al colisionar
-                marcador += 100;
-                //El asteroide se mueve al azar en la mitad derecha del appler.
-                temp.setPosX((int) (Math.random() * getWidth() / 2) + getWidth() / 2 - temp.getAncho());
-                temp.setPosY((-100) - i * 100);
+        }
+
+        for (int i = 0; i < lista.size(); i++) {
+            Malo asteroide = (Malo) lista.get(i);                         // se hace el cast para cada asteroide
+            if (asteroide.getPosY() < getHeight()) {
+                //si la Y de los asteroides son menores a la altura del applet
+                //asteroide.setPosY(asteroide.getPosY() + (int) (Math.random() * 5 + 1));
+                asteroide.setPosY(asteroide.getPosY() + asteroide.getSpeed());       //iran bajando 
+            }
+
+        }
+
+    }
+
+    /**
+     * Metodo usado para checar las colisiones del objeto elefante y raton con
+     * las orillas del <code>Applet</code>.
+     */
+    public void checaColision() {
+
+        //checa colision con el applet
+        if (planeta.getPosY() < 0) {              //si se pasa de del borde de arriba, la imagen se pone al raz
+            planeta.setPosY(0);
+        }
+
+        if (planeta.getPosY() + planeta.getAlto() > getHeight()) {       //si se pasa del borde de abajo, la imagen se pone al raz
+            planeta.setPosY(getHeight() - planeta.getAlto());
+        }
+
+        if (planeta.getPosX() < 0) {                             //si se pasa del borde de la izquierda, la imagen se ponse al raz
+            planeta.setPosX(0);
+        }
+
+        if (planeta.getPosX() + planeta.getAncho() > getWidth()) {      //si se pasa del borde de la derecha, la imagen se pone al raz
+            planeta.setPosX(getWidth() - planeta.getAncho());
+        }
+
+        for (int i = 0; i < lista.size(); i++) {
+            Malo asteroide = (Malo) lista.get(i);
+            if (asteroide.getPosX() < 0) {                                          //cuando el asteroide llega al lado izquierdo del applet...
+                sonido.play();
+                asteroide.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                            //se reposiciona en su posicion inicial
+                asteroide.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+                if (score > 0) {                                                 //si el puntaje es mayor a 0..se quitan 20 puntos
+                    score -= 20;
+                }
+                cont++;                                                         //el contador incrementa en 1 cuando topa en el fondo 
+
+            } else if (asteroide.getPosY() + asteroide.getAlto() > getHeight()) {              //cuando el asteroide llega al lado de abajo del applet...
+                sonido.play();
+                asteroide.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                           //se reposiciona en su posicion inicial
+                asteroide.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+                if (score > 0) //si el puntaje es mayor a 0..se quitan 20 puntos
+                {
+                    score -= 20;
+                }
+                cont++;                                                          //el contador incrementa en 1 cuando topa en el fondo   
 
             }
+
         }
-*/
+
+        //Colision entre objetos
+        for (int i = 0; i < lista.size(); i++) {
+            Malo asteroide = (Malo) lista.get(i);
+
+            if (planeta.intersecta(asteroide) && !(planeta.intersek(asteroide))) {          //si intersectó con el asteroide pero no al rectangulo chico
+                flag = true;                                            //entró por arriba
+
+            } else if (!(planeta.intersecta(asteroide)) && flag) {     //si dejo de intersectar y la la booleana que checa si entro por arriba esta prendida
+                flag = false;                                               //laa bandera se apaga
+
+            } else if (!(flag) && planeta.intersek(asteroide)) {         // no entró por arriba (o por los lados) e intersecto con el rectangulo chiquito, entró por donde debía de entrar
+                bomb.play();
+                score += 100;
+                asteroide.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);     // se reposiciona el asteroide
+                asteroide.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+
+            }
+
+        }
     }
 
     /**
@@ -240,150 +295,106 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
         g.drawImage(dbImage, 0, 0, this);
     }
 
+    public void keyPressed(KeyEvent e) {
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+
+            direccion = 3;
+            //Presiono flecha abajo
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+
+            direccion = 4;
+            //Presiono flecha izquierda
+
+        } else if (e.getKeyCode() == KeyEvent.VK_P) {
+            pausa = !pausa;
+
+        }
+        move = true;
+
+    }
+
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public void keyReleased(KeyEvent e) {
+        //Presiono flecha arriba
+        move = false;
+    }
+
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    public void mousePressed(MouseEvent e) {
+
+        if (planeta.contiene(e.getX(), e.getY()) & !presionado) { //si hice click dentro del rectangulo y no esta presionado
+            coordenada_x = e.getX();            //se procede a guardar coordenadas
+            coordenada_y = e.getY();
+            off_x = e.getX() - planeta.getPosX(); //se calcula la diferencia para el desface
+            off_y = e.getY() - planeta.getPosY(); //se calcula la diferencia para el desface
+            presionado = true;
+        }
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        presionado = false;                 //cuando se deja de picar la bandera se apaga
+    }
+
+    public void mouseMoved(MouseEvent e) {                   //metodos de MouseMotionListener
+
+    }
+
+    public void mouseDragged(MouseEvent e) {                //metodos de MouseMotionListener
+
+        if (presionado) {                       //si la imagen está presionada y la imagen se mueve, se guardan posiciones
+            coordenada_x = e.getX();
+            coordenada_y = e.getY();
+        }
+    }
+
     /**
      * Metodo <I>paint</I> sobrescrito de la clase <code>Applet</code>, heredado
      * de la clase Container.<P>
      * En este metodo se dibuja la imagen con la posicion actualizada, ademas
      * que cuando la imagen es cargada te despliega una advertencia.
      *
-     * @param g es el <code>objeto grafico</code> usado para dibujar.
+     * @paramg es el <code>objeto grafico</code> usado para dibujar.
      */
     public void paint(Graphics g) {
         if (vidas > 0) {
-           // if (cat != null && Aarhus != null) {
-
-                g.drawImage(background, 0, 0, this);
-                //Dibuja los string de vidas y puntos // X,Y
-                g.setColor(Color.white);
-                g.setFont(new Font("Avenir Black", Font.BOLD, 18));
-                g.drawString("Puntos: " + marcador, 950, 20);
-                g.drawString("Vidas: " + vidas, 950, 60);
+            if (planeta != null && lista != null) {
                 //Dibuja la imagen en la posicion actualizada
-                g.drawImage(cat.getImagenI(), cat.getPosX(), cat.getPosY(), this);
-               /* for (int i = 0; i < Asteroides.size(); i++) {
-                    Asteroide temp = (Asteroide) Asteroides.get(i);
-                    g.drawImage(temp.getImagenI(), temp.getPosX(), temp.getPosY(), this);
+                g.drawImage(planeta.getImagenI(), planeta.getPosX(), planeta.getPosY(), this);
+                g.setColor(Color.white);
+                g.drawString("Score = " + score, 20, 20);
+                g.drawString("Vidas = " + vidas, 20, 50);
+                if (pausa) {
+                    g.setColor(Color.black);
+                    g.drawString(planeta.getPausado(), planeta.getPosX() + planeta.getAncho() / 3, planeta.getPosY() + planeta.getAlto() / 2);
+                }
 
-              //  }
-          /*  } else {
+                for (int i = 0; i < lista.size(); i++) {
+                    Malo asteroide = (Malo) lista.get(i);
+                    g.drawImage(asteroide.getImagenI(), asteroide.getPosX(), asteroide.getPosY(), this);
+                }
+
+            } else {
                 //Da un mensaje mientras se carga el dibujo	
                 g.drawString("No se cargo la imagen..", 20, 20);
-            }*/
+            }
+
         } else {
-            g.drawImage(gameover, 0, 0, this);
-            g.setColor(Color.white);
-            g.setFont(new Font("Avenir Black", Font.BOLD, 40));
-            if (marcador < 0) {
-                marcador = 0;
-            }
-            g.drawString("Puntos: " + marcador, 400, 650);
+            g.drawImage(game_over, -100, -30, this);
         }
     }
 
-    /**
-     * Metodo <I>mousePressed</I> sobrescrito de la interface
-     * <code>MouseListener</code>.<P>
-     * En este metodo maneja el evento que se genera al apretar el boton del
-     * mouse
-     *
-     * @param e es el <code>evento</code> que se genera en apretar el boton
-     */
-  /*  public void mousePressed(MouseEvent e) {
-
-        mousePosX = e.getX();
-        mousePosY = e.getY();
-        if (cat.intersectaPuntos(e.getX(), e.getY())) {
-            difPosX = cat.getPosX() - e.getX();
-            difPosY = cat.getPosY() - e.getY();
-            planetClicked = true;
-            draggedUp = true;
-        }
-
-    }
-
-    /**
-     * Metodo <I>mouseClicked</I> sobrescrito de la interface
-     * <code>MouseListener</code>.<P>
-     * En este metodo maneja el evento que se genera al apretar el boton del
-     * mouse y soltarlo
-     *
-     * @param e es el <code>evento</code> que se genera en apretar el boton y
-     * soltar el boton
-     */
- /*   public void mouseClicked(MouseEvent e) {
-        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    /**
-     * Metodo <I>mouseRelease</I> sobrescrito de la interface
-     * <code>MouseListener</code>.<P>
-     * En este metodo maneja el evento que se genera al soltar el boton del
-     * mouse
-     *
-     * @param e es el <code>evento</code> que se genera en soltar el boton
-     */
- /*   public void mouseReleased(MouseEvent e) {
-        planetClicked = false;
-        draggedUp = false;
-    }
-
-    /**
-     * Metodo <I>mouseDragged</I> sobrescrito de la interface
-     * <code>MouseMotionListener</code>.<P>
-     * En este metodo maneja el evento que se genera mover el mouse mientras se
-     * apreta el boton
-     *
-     * @param e es el <code>evento</code> que se genera en mover el mouse
-     */
-  /*  public void mouseDragged(MouseEvent e) {
-        if (planetClicked) {
-            AntiguaPosY = cat.getPosY();
-            AntiguaPosX = cat.getPosX();
-            cat.setPosX(cat.getPosX() + (e.getX() - mousePosX));
-            cat.setPosY(cat.getPosY() + (e.getY() - mousePosY));
-            mousePosX = e.getX();
-            mousePosY = e.getY();
-            if ((AntiguaPosY > mousePosY) && (!(mousePosX > AntiguaPosX + 100) || !(mousePosX < AntiguaPosX - 100))) {
-                draggedUp = true;
-            } else {
-                draggedUp = false;
-            }
-
-        }
-
-    }
-
-    /**
-     * Metodo <I>mouseEntered</I> sobrescrito de la interface
-     * <code>MouseListener</code>.<P>
-     * En este metodo maneja el evento que se genera cuando el mouse enters
-     *
-     * @param e es el <code>evento</code> que se genera al enter el mouse
-     */
-  /*  public void mouseEntered(MouseEvent e) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    /**
-     * Metodo <I>mouseEntered</I> sobrescrito de la interface
-     * <code>MouseListener</code>.<P>
-     * En este metodo maneja el evento que se genera cuando el mouse enters
-     *
-     * @param e es el <code>evento</code> que se genera al enter el mouse
-     */
-/*    public void mouseExited(MouseEvent e) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    /**
-     * Metodo <I>mouseMoved</I> sobrescrito de la interface
-     * <code>MouseListener</code>.<P>
-     * En este metodo maneja el evento que se genera al mover el mouse
-     *
-     * @param e es el <code>evento</code> que se genera al mover el mouse
-     */
-  /*  public void mouseMoved(MouseEvent e) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-*/
 }

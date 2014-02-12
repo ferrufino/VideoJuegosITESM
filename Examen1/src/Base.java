@@ -1,9 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
 /**
- * Clase Base
  *
- * @author Gustavo Ferrufino
- * @version 1.00 26/01/2014
+ * @author Juan
  */
 import javax.swing.ImageIcon;
 import java.awt.Image;
@@ -11,146 +14,71 @@ import java.awt.Rectangle;
 
 public class Base {
 
-    int posX;    //posicion en x.       
-    int posY;	//posicion en y.
-    //private ImageIcon icono;    //icono.
-    protected Animacion animacion;
+    private int posX;    //posicion en x.       
+    private int posY;	//posicion en y.
+    protected Animacion animacion;    //icono.
 
-    /**
-     * Metodo constructor usado para crear el objeto
-     *
-     * @param posX es la <code>posicion en x</code> del objeto.
-     * @param posY es la <code>posicion en y</code> del objeto.
-     * @param image es la <code>imagen</code> del objeto.
-     */
     public Base(int posX, int posY) {
         this.posX = posX;
         this.posY = posY;
-       
 
     }
 
-    /**
-     * Metodo modificador usado para asignar la animacion creada del objeto
-     *
-     * @param ani es la <code>animacion creada del</code> del objeto.
-     */
-    public void setAnimacion(Animacion ani) {
-        animacion=ani;
-    }
-    /**
-     * Metodo de acceso que regresa la animacion del objeto
-     *
-     * @return animacion es la <code>animacion creada</code> del objeto.
-     */
-    public Animacion getAnimacion() {
-        return animacion;
-    }    /**
-     * Metodo modificador usado para cambiar la posicion en x del objeto
-     *
-     * @param posX es la <code>posicion en x</code> del objeto.
-     */
     public void setPosX(int posX) {
         this.posX = posX;
     }
-   
-    /**
-     * Metodo de acceso que regresa la posicion en x del objeto
-     *
-     * @return posX es la <code>posicion en x</code> del objeto.
-     */
+
     public int getPosX() {
         return posX;
     }
 
-    /**
-     * Metodo modificador usado para cambiar la posicion en y del objeto
-     *
-     * @param posY es la <code>posicion en y</code> del objeto.
-     */
     public void setPosY(int posY) {
         this.posY = posY;
     }
 
-    /**
-     * Metodo de acceso que regresa la posicion en y del objeto
-     *
-     * @return posY es la <code>posicion en y</code> del objeto.
-     */
     public int getPosY() {
         return posY;
     }
 
-    /**
-     * Metodo de acceso que regresa el ancho del icono
-     *
-     * @return un objeto de la clase <code>ImageIcon</code> que es el ancho del
-     * icono.
-     */
     public int getAncho() {
-        return (new ImageIcon(animacion.getImagen())).getIconWidth();
+        return (new ImageIcon(animacion.getImagen()).getIconWidth());
     }
 
-    /**
-     * Metodo de acceso que regresa el alto del icono
-     *
-     * @return un objeto de la clase <code>ImageIcon</code> que es el alto del
-     * icono.
-     */
     public int getAlto() {
-        return (new ImageIcon(animacion.getImagen())).getIconHeight();
+        return (new ImageIcon(animacion.getImagen()).getIconHeight());
     }
 
-    /**
-     * Metodo de acceso que regresa la imagen del icono
-     *
-     * @return un objeto de la clase <code>Image</code> que es la imagen del
-     * icono.
-     */
     public Image getImagenI() {
-        return (new ImageIcon(animacion.getImagen())).getImage();
+        return (new ImageIcon(animacion.getImagen()).getImage());
     }
 
-    /**
-     * Metodo de acceso que regresa un nuevo rectangulo
-     *
-     * @return un objeto de la clase <code>Rectangle</code> que es el perimetro
-     * del rectangulo
-     */
     public Rectangle getPerimetro() {
         return new Rectangle(getPosX(), getPosY(), getAncho(), getAlto());
     }
 
-    /**
-     * Checa si el objeto <code>Figura</code> intersecta con una coordenadas
-     *
-     * @return un valor boleano <code>true</code> si lo intersecta
-     * <code>false</code> en caso contrario
-     */
-    public boolean intersectaPuntos(int X, int Y) {
-        return getPerimetro().contains(X, Y);
+    public boolean intersecta(Base obj) {
+        return getPerimetro().intersects(obj.getPerimetro());
     }
 
-    /**
-     * Metodo de acceso que regresa un nuevo rectangulo
-     *
-     * @return un objeto de la clase <code>Rectangle</code> que es el perimetro
-     * del rectangulo Creado como base de la <code>Figura</code> Asteroide
-     */
-    public Rectangle getParamRec() {
-        return new Rectangle(getPosX() + 10, getPosY() + getAlto(), getAncho() - 20, 1);
+    public boolean contiene(int posX, int posY) {
+        return getPerimetro().contains(posX, posY);
     }
 
-    /**
-     * Checa si el objeto <code>Figura</code> intersecta con una <code> Figura
-     * </code>
-     *
-     * @return un valor boleano <code>true</code> si lo intersecta
-     * <code>false</code> en caso contrario
-     */
-    /*
-     public boolean intersecta(Planeta obj) {
-     return getParamRec().intersects(obj.getPerimetro());
-     }
-     */
+    public Rectangle getRect() {                             //se hace el rectangulo pequeño 
+        int x = getPosX() + getAncho() / 4;
+        int y = getPosY() + (getAlto() * 3 / 4);
+        int wi = getAncho() / 2;
+        int ht = getAlto() / 4;
+
+        return new Rectangle(x, y, wi, ht);
+
+    }
+
+    public boolean intersek(Base obj) {
+        return getPerimetro().intersects(obj.getRect());
+    }
+    
+    public void actualiza(long t){
+        animacion.actualiza(t);
+    }
 }

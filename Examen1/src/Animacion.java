@@ -1,10 +1,3 @@
-
-/**
- * Clase Animacion
- *
- * @author Gustavo Ferrufino
- * @version 1.00 26/01/2014
- */
 import java.awt.Image;
 import java.util.ArrayList;
 
