@@ -4,8 +4,8 @@ import java.awt.Toolkit;
 
 public class Malo extends Base {
 
-    private static int conteo;
-    private int speed;
+    private static int CONTEO;
+    private int SPEED;
 
     public Malo(int posX, int posY) {
         super(posX, posY);
@@ -22,24 +22,24 @@ public class Malo extends Base {
         animacion.sumaCuadro(malo3, 100);
         animacion.sumaCuadro(malo4, 100);
       
-        speed = (int) ((Math.random() * (9))+ 1);
+        SPEED = (int) ((Math.random() * (9))+ 1);
     }
     
 
     public static int getConteo() {
-        return conteo;
+        return CONTEO;
     }
 
     public static void setConteo(int cont) {
-        conteo = cont;
+        CONTEO = cont;
     }
 
     public int getSpeed() {
-        return speed;
+        return SPEED;
     }
 
     public void setSpeed(int vel) {
-        speed = vel;
+        SPEED = vel;
     }
 }
 

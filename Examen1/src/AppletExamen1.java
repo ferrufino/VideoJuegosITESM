@@ -32,10 +32,10 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     private AudioClip sonido;    // Objeto AudioClip
     private AudioClip rat;    // Objeto AudioClip
     private AudioClip bomb;    //Objeto AudioClip 
-    private Bueno planeta;    // Objeto de la clase Elefante
-    private Malo raton;   //Objeto de la clase Raton
-    private LinkedList lista;           //lista de ratones
-    private int cant;               //cantidad de asteroides
+    private Bueno gatoBueno;    // Objeto de la clase Elefante
+    private Malo perroMalo;   //Objeto de la clase Raton
+    private LinkedList lista;           //lista de perroMaloes
+    private int cant;               //cantidad de perroMalos
     private int mayor;
     private int menor;
     private boolean presionado;
@@ -54,9 +54,9 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     private int x_menor;
     private int y_mayor;
     private int y_menor;
+    private boolean PAUSE; //Permite al usuario pausar el juego
     private boolean flag;
     private boolean move;
-    private boolean pausa;
     private long tiempoActual;
     private long tiempoInicial;
 
@@ -66,29 +66,24 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
      * usarse en el <code>Applet</code> y se definen funcionalidades.
      */
     public void init() {
-        pausa = false;
+        resize(500, 500);
+
+        PAUSE = false;
         move = false;
-        this.setSize(800, 500);
+
         direccion = 0;
-        menor = 0;                    //cantidad minima de asteroides que se generarán al azar
-        mayor = 10;                    //cantidad máxima de asteroides que se generarán al azar
+        menor = 0;                    //cantidad minima de perroMalos que se generarán al azar
+        mayor = 3;                    //cantidad máxima de perroMalos que se generarán al azar
         score = 0;                    //puntaje inicial
         vidas = 5;                    //vidaas iniciales
-        cont = 0;                     //contadaor que indica cuantos asteroides han golpeado el fondo del applet
-        x_mayor = (getWidth() - getWidth() / 10);           //posicion máxima en x que tendrán los asteroides
-        x_menor = 0;           //posicion mínima en x que tendrán los asteroides
-        y_mayor = -100;          //posicion máxima en y que tendrán los asteroides
-        y_menor = -200;        //posicion mínima en y que tendrán los asteroides
+        cont = 0;                     //contadaor que indica cuantos perroMalos han golpeado el fondo del applet
+        x_mayor = (getWidth() - getWidth() / 10);           //posicion máxima en x que tendrán los perroMalos
+        x_menor = 0;           //posicion mínima en x que tendrán los perroMalos
+        y_mayor = -100;          //posicion máxima en y que tendrán los perroMalos
+        y_menor = -200;        //posicion mínima en y que tendrán los perroMalos
         flag = false;
-        int posX = getWidth() / 2;              // posicion inicial del planeta en x
-        int posY = getHeight();             // posicion inicial del planeta en y
-        URL eURL = this.getClass().getResource("Images/frame_0_00.gif");
-        planeta = new Bueno(posX, posY);
 
-        setBackground(Color.black);
-        addKeyListener(this);
-        addMouseListener(this);
-        addMouseMotionListener(this);
+
         //Se cargan los sonidos.
 
         URL beURL = this.getClass().getResource("sounds/boom.wav");
@@ -98,20 +93,31 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
 
         lista = new LinkedList();
 
-        cant = 10;            //se crea la cantidad de asteroides al azar
+        cant = 3;            //se crea la cantidad de perroMalos al azar
         while (cant != 0) {
-            posrX = ((int) (Math.random() * (x_mayor - x_menor))) + x_menor;     //se generarán los asteroides en posiciones aleatorias fuera del applet
+            posrX = ((int) (Math.random() * (x_mayor - x_menor))) + x_menor;     //se generarán los perroMalos en posiciones aleatorias fuera del applet
             posrY = ((int) (Math.random() * (y_mayor - y_menor))) + y_menor;
-            
-            raton = new Malo(posrX, posrY);
-            raton.setPosX(posrX);
-            raton.setPosY(posrY);
-            lista.add(raton);
+
+            perroMalo = new Malo(posrX, posrY);
+            perroMalo.setPosX(posrX);
+            perroMalo.setPosY(posrY);
+            lista.add(perroMalo);
             cant--;
         }
+        int posX = (getWidth() / 2) - 50;              // posicion inicial del gatoBueno en x
+        int posY = getHeight();             // posicion inicial del gatoBueno en y
+
+        gatoBueno = new Bueno(posX, posY);
+        
         URL goURL = this.getClass().getResource("images/game_over.gif");
         game_over = Toolkit.getDefaultToolkit().getImage(goURL);
 
+        setBackground(Color.black);
+        
+        //Inicializadores 
+        addKeyListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
     }
 
     /**
@@ -138,11 +144,11 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     public void run() {
         tiempoActual = System.currentTimeMillis();
         while (vidas > 0) {
-            if (!pausa) {
-                actualiza();
-                checaColision();
+            if (!PAUSE) {
+                Actualiza();
+                ChecaColision();
             }
-            repaint();    // Se actualiza el <code>Applet</code> repintando el contenido.
+            repaint();    // Se Actualiza el <code>Applet</code> repintando el contenido.
             try {
                 // El thread se duerme.
                 Thread.sleep(20);
@@ -153,47 +159,53 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     }
 
     /**
-     * Metodo usado para actualizar la posicion de objetos elefante y raton.
+     * Metodo usado para Actualizar la posicion de objetos elefante y perroMalo.
      *
      */
-    public void actualiza() {
+    public void Actualiza() {
 
-        if (cont >= 10) {                                   //cuando la cantidad de asteroides que golpearon el piso sea 10..
-            vidas--;                                    //las vidas decrementarán y la velocidad de los asteroides aumentará
-            cont = 0;                                     //la cantidad de asteroides volverá a ser 0
+        if (cont >= 10) {                                   //cuando la cantidad de perroMalos que golpearon el piso sea 10..
+            vidas--;                                    //las vidas decrementarán y la velocidad de los perroMalos aumentará
+            cont = 0;                                     //la cantidad de perroMalos volverá a ser 0
         }
+        
+        //Actualiza la animacion creada de los objetos
         long tiempoTranscurrido = System.currentTimeMillis() - tiempoActual;
         tiempoActual += tiempoTranscurrido;
-        planeta.actualiza(tiempoTranscurrido);
-        raton.actualiza(tiempoTranscurrido);
+        gatoBueno.updateS(tiempoTranscurrido);
+        for (int i = 0; i < lista.size(); i++) {
+            Malo perroMalo = (Malo) lista.get(i);
+            perroMalo.updateS(tiempoTranscurrido);
+        }
         
+       
         if (move) {
             switch (direccion) {
                 case 3: {
 
-                    planeta.setPosX(planeta.getPosX() - 1);
+                    gatoBueno.setPosX(gatoBueno.getPosX() - 1);
                     break; //se mueve hacia la izquierda
                 }
                 case 4: {
 
-                    planeta.setPosX(planeta.getPosX() + 1);
+                    gatoBueno.setPosX(gatoBueno.getPosX() + 1);
                     break; //se mueve hacia la derecha
                 }
             }
         }
 
-        if (presionado) {                              //si la imagen sigue presionda, se actualizan las posiciones de x y de y
-            planeta.setPosY(coordenada_y - off_y);
-            planeta.setPosX(coordenada_x - off_x);
+        if (presionado) {                              //si la imagen sigue presionda, se Actualizan las posiciones de x y de y
+            gatoBueno.setPosY(coordenada_y - off_y);
+            gatoBueno.setPosX(coordenada_x - off_x);
 
         }
 
         for (int i = 0; i < lista.size(); i++) {
-            Malo asteroide = (Malo) lista.get(i);                         // se hace el cast para cada asteroide
-            if (asteroide.getPosY() < getHeight()) {
-                //si la Y de los asteroides son menores a la altura del applet
-                //asteroide.setPosY(asteroide.getPosY() + (int) (Math.random() * 5 + 1));
-                asteroide.setPosY(asteroide.getPosY() + asteroide.getSpeed());       //iran bajando 
+            Malo perroMalo = (Malo) lista.get(i);                         // se hace el cast para cada perroMalo
+            if (perroMalo.getPosY() < getHeight()) {
+                //si la Y de los perroMalos son menores a la altura del applet
+                //perroMalo.setPosY(perroMalo.getPosY() + (int) (Math.random() * 5 + 1));
+                perroMalo.setPosY(perroMalo.getPosY() + perroMalo.getSpeed());       //iran bajando 
             }
 
         }
@@ -201,43 +213,43 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     }
 
     /**
-     * Metodo usado para checar las colisiones del objeto elefante y raton con
-     * las orillas del <code>Applet</code>.
+     * Metodo usado para checar las colisiones del objeto elefante y perroMalo
+     * con las orillas del <code>Applet</code>.
      */
-    public void checaColision() {
+    public void ChecaColision() {
 
         //checa colision con el applet
-        if (planeta.getPosY() < 0) {              //si se pasa de del borde de arriba, la imagen se pone al raz
-            planeta.setPosY(0);
+        if (gatoBueno.getPosY() < 0) {              //si se pasa de del borde de arriba, la imagen se pone al raz
+            gatoBueno.setPosY(0);
         }
 
-        if (planeta.getPosY() + planeta.getAlto() > getHeight()) {       //si se pasa del borde de abajo, la imagen se pone al raz
-            planeta.setPosY(getHeight() - planeta.getAlto());
+        if (gatoBueno.getPosY() + gatoBueno.getAlto() > getHeight()) {       //si se pasa del borde de abajo, la imagen se pone al raz
+            gatoBueno.setPosY(getHeight() - gatoBueno.getAlto());
         }
 
-        if (planeta.getPosX() < 0) {                             //si se pasa del borde de la izquierda, la imagen se ponse al raz
-            planeta.setPosX(0);
+        if (gatoBueno.getPosX() < 0) {                             //si se pasa del borde de la izquierda, la imagen se ponse al raz
+            gatoBueno.setPosX(0);
         }
 
-        if (planeta.getPosX() + planeta.getAncho() > getWidth()) {      //si se pasa del borde de la derecha, la imagen se pone al raz
-            planeta.setPosX(getWidth() - planeta.getAncho());
+        if (gatoBueno.getPosX() + gatoBueno.getAncho() > getWidth()) {      //si se pasa del borde de la derecha, la imagen se pone al raz
+            gatoBueno.setPosX(getWidth() - gatoBueno.getAncho());
         }
 
         for (int i = 0; i < lista.size(); i++) {
-            Malo asteroide = (Malo) lista.get(i);
-            if (asteroide.getPosX() < 0) {                                          //cuando el asteroide llega al lado izquierdo del applet...
+            Malo perroMalo = (Malo) lista.get(i);
+            if (perroMalo.getPosX() < 0) {                                          //cuando el perroMalo llega al lado izquierdo del applet...
                 sonido.play();
-                asteroide.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                            //se reposiciona en su posicion inicial
-                asteroide.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+                perroMalo.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                            //se reposiciona en su posicion inicial
+                perroMalo.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
                 if (score > 0) {                                                 //si el puntaje es mayor a 0..se quitan 20 puntos
                     score -= 20;
                 }
                 cont++;                                                         //el contador incrementa en 1 cuando topa en el fondo 
 
-            } else if (asteroide.getPosY() + asteroide.getAlto() > getHeight()) {              //cuando el asteroide llega al lado de abajo del applet...
+            } else if (perroMalo.getPosY() + perroMalo.getAlto() > getHeight()) {              //cuando el perroMalo llega al lado de abajo del applet...
                 sonido.play();
-                asteroide.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                           //se reposiciona en su posicion inicial
-                asteroide.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+                perroMalo.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                           //se reposiciona en su posicion inicial
+                perroMalo.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
                 if (score > 0) //si el puntaje es mayor a 0..se quitan 20 puntos
                 {
                     score -= 20;
@@ -250,19 +262,19 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
 
         //Colision entre objetos
         for (int i = 0; i < lista.size(); i++) {
-            Malo asteroide = (Malo) lista.get(i);
+            Malo perroMalo = (Malo) lista.get(i);
 
-            if (planeta.intersecta(asteroide) && !(planeta.intersek(asteroide))) {          //si intersectó con el asteroide pero no al rectangulo chico
+            if (gatoBueno.intersecta(perroMalo) && !(gatoBueno.intersek(perroMalo))) {          //si intersectó con el perroMalo pero no al rectangulo chico
                 flag = true;                                            //entró por arriba
 
-            } else if (!(planeta.intersecta(asteroide)) && flag) {     //si dejo de intersectar y la la booleana que checa si entro por arriba esta prendida
+            } else if (!(gatoBueno.intersecta(perroMalo)) && flag) {     //si dejo de intersectar y la la booleana que checa si entro por arriba esta prendida
                 flag = false;                                               //laa bandera se apaga
 
-            } else if (!(flag) && planeta.intersek(asteroide)) {         // no entró por arriba (o por los lados) e intersecto con el rectangulo chiquito, entró por donde debía de entrar
+            } else if (!(flag) && gatoBueno.intersek(perroMalo)) {         // no entró por arriba (o por los lados) e intersecto con el rectangulo chiquito, entró por donde debía de entrar
                 bomb.play();
                 score += 100;
-                asteroide.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);     // se reposiciona el asteroide
-                asteroide.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+                perroMalo.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);     // se reposiciona el perroMalo
+                perroMalo.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
 
             }
 
@@ -270,31 +282,69 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     }
 
     /**
-     * Metodo <I>update</I> sobrescrito de la clase <code>Applet</code>,
+     * Metodo <I>Update</I> sobrescrito de la clase <code>Applet</code>,
      * heredado de la clase Container.<P>
-     * En este metodo lo que hace es actualizar el contenedor
+     * En este metodo lo que hace es Actualizar el contenedor
      *
      * @param g es el <code>objeto grafico</code> usado para dibujar.
      */
-    public void update(Graphics g) {
+    public void Update(Graphics g) {
         // Inicializan el DoubleBuffer
         if (dbImage == null) {
             dbImage = createImage(this.getSize().width, this.getSize().height);
             dbg = dbImage.getGraphics();
         }
 
-        // Actualiza la imagen de fondo.
+        // Update la imagen de fondo.
         dbg.setColor(getBackground());
         dbg.fillRect(0, 0, this.getSize().width, this.getSize().height);
 
-        // Actualiza el Foreground.
+        // Update el Foreground.
         dbg.setColor(getForeground());
         paint(dbg);
 
-        // Dibuja la imagen actualizada
+        // Dibuja la imagen Actualizada
         g.drawImage(dbImage, 0, 0, this);
     }
+    
+    /**
+     * Metodo <I>paint</I> sobrescrito de la clase <code>Applet</code>, heredado
+     * de la clase Container.<P>
+     * En este metodo se dibuja la imagen con la posicion Actualizada, ademas
+     * que cuando la imagen es cargada te despliega una advertencia.
+     *
+     * @paramg es el <code>objeto grafico</code> usado para dibujar.
+     */
+    public void paint(Graphics g) {
+        if (vidas > 0) {
+            if (gatoBueno != null && lista != null) {
+                //Dibuja la imagen en la posicion Actualizada
+                g.drawImage(gatoBueno.getImagenI(), gatoBueno.getPosX(), gatoBueno.getPosY(), this);
+                g.setColor(Color.white);
+                //X Y
+                g.drawString("Vidas = " + vidas, 400, 50);
+                g.drawString("Score = " + score, 400, 20);
 
+                if (PAUSE) {
+                    g.setColor(Color.black);
+                    g.drawString(gatoBueno.getPausado(), gatoBueno.getPosX() + gatoBueno.getAncho() / 3, gatoBueno.getPosY() + gatoBueno.getAlto() / 2);
+                }
+
+                for (int i = 0; i < lista.size(); i++) {
+                    Malo perroMalo = (Malo) lista.get(i);
+                    g.drawImage(perroMalo.getImagenI(), perroMalo.getPosX(), perroMalo.getPosY(), this);
+                }
+
+            } else {
+                //Da un mensaje mientras se carga el dibujo	
+                g.drawString("No se cargo la imagen..", 20, 20);
+            }
+
+        } else {
+            g.drawImage(game_over, -100, -30, this);
+        }
+    }
+    
     public void keyPressed(KeyEvent e) {
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -307,7 +357,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             //Presiono flecha izquierda
 
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
-            pausa = !pausa;
+            PAUSE = !PAUSE;
 
         }
         move = true;
@@ -336,11 +386,11 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
 
     public void mousePressed(MouseEvent e) {
 
-        if (planeta.contiene(e.getX(), e.getY()) & !presionado) { //si hice click dentro del rectangulo y no esta presionado
+        if (gatoBueno.contiene(e.getX(), e.getY()) & !presionado) { //si hice click dentro del rectangulo y no esta presionado
             coordenada_x = e.getX();            //se procede a guardar coordenadas
             coordenada_y = e.getY();
-            off_x = e.getX() - planeta.getPosX(); //se calcula la diferencia para el desface
-            off_y = e.getY() - planeta.getPosY(); //se calcula la diferencia para el desface
+            off_x = e.getX() - gatoBueno.getPosX(); //se calcula la diferencia para el desface
+            off_y = e.getY() - gatoBueno.getPosY(); //se calcula la diferencia para el desface
             presionado = true;
         }
     }
@@ -361,40 +411,6 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         }
     }
 
-    /**
-     * Metodo <I>paint</I> sobrescrito de la clase <code>Applet</code>, heredado
-     * de la clase Container.<P>
-     * En este metodo se dibuja la imagen con la posicion actualizada, ademas
-     * que cuando la imagen es cargada te despliega una advertencia.
-     *
-     * @paramg es el <code>objeto grafico</code> usado para dibujar.
-     */
-    public void paint(Graphics g) {
-        if (vidas > 0) {
-            if (planeta != null && lista != null) {
-                //Dibuja la imagen en la posicion actualizada
-                g.drawImage(planeta.getImagenI(), planeta.getPosX(), planeta.getPosY(), this);
-                g.setColor(Color.white);
-                g.drawString("Score = " + score, 20, 20);
-                g.drawString("Vidas = " + vidas, 20, 50);
-                if (pausa) {
-                    g.setColor(Color.black);
-                    g.drawString(planeta.getPausado(), planeta.getPosX() + planeta.getAncho() / 3, planeta.getPosY() + planeta.getAlto() / 2);
-                }
 
-                for (int i = 0; i < lista.size(); i++) {
-                    Malo asteroide = (Malo) lista.get(i);
-                    g.drawImage(asteroide.getImagenI(), asteroide.getPosX(), asteroide.getPosY(), this);
-                }
-
-            } else {
-                //Da un mensaje mientras se carga el dibujo	
-                g.drawString("No se cargo la imagen..", 20, 20);
-            }
-
-        } else {
-            g.drawImage(game_over, -100, -30, this);
-        }
-    }
 
 }

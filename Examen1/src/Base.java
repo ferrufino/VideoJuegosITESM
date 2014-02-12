@@ -78,7 +78,7 @@ public class Base {
         return getPerimetro().intersects(obj.getRect());
     }
     
-    public void actualiza(long t){
+    public void updateS(long t){
         animacion.actualiza(t);
     }
 }
