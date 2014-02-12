@@ -1,3 +1,4 @@
+
 /**
  * Clase Base
  *
@@ -14,6 +15,7 @@ public class Base {
     int posY;	//posicion en y.
     //private ImageIcon icono;    //icono.
     protected Animacion animacion;
+
     /**
      * Metodo constructor usado para crear el objeto
      *
@@ -25,7 +27,7 @@ public class Base {
         this.posX = posX;
         this.posY = posY;
     //    icono = new ImageIcon(image);
-       
+
     }
 
     /**
@@ -63,7 +65,6 @@ public class Base {
     public int getPosY() {
         return posY;
     }
-
 
     /**
      * Metodo de acceso que regresa el ancho del icono
@@ -105,8 +106,6 @@ public class Base {
         return new Rectangle(getPosX(), getPosY(), getAncho(), getAlto());
     }
 
-
-
     /**
      * Checa si el objeto <code>Figura</code> intersecta con una coordenadas
      *
@@ -134,12 +133,9 @@ public class Base {
      * @return un valor boleano <code>true</code> si lo intersecta
      * <code>false</code> en caso contrario
      */
-   /*
-    public boolean intersecta(Planeta obj) {
-        return getParamRec().intersects(obj.getPerimetro());
-    }
-    */
-
+    /*
+     public boolean intersecta(Planeta obj) {
+     return getParamRec().intersects(obj.getPerimetro());
+     }
+     */
 }
-	
-
