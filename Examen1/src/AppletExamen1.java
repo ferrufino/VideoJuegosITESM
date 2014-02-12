@@ -66,9 +66,10 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
      * usarse en el <code>Applet</code> y se definen funcionalidades.
      */
     public void init() {
-        resize(500, 500);
+        
+        resize(1000, 800);
 
-        PAUSE = false;
+        PAUSE = true;
         move = false;
 
         direccion = 0;
@@ -83,9 +84,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         y_menor = -200;        //posicion mínima en y que tendrán los perroMalos
         flag = false;
 
-
         //Se cargan los sonidos.
-
         URL beURL = this.getClass().getResource("sounds/boom.wav");
         sonido = getAudioClip(beURL);
         URL baURL = this.getClass().getResource("sounds/Explosion.wav");
@@ -108,12 +107,12 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         int posY = getHeight();             // posicion inicial del gatoBueno en y
 
         gatoBueno = new Bueno(posX, posY);
-        
+
         URL goURL = this.getClass().getResource("images/game_over.gif");
         game_over = Toolkit.getDefaultToolkit().getImage(goURL);
 
         setBackground(Color.black);
-        
+
         //Inicializadores 
         addKeyListener(this);
         addMouseListener(this);
@@ -168,7 +167,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             vidas--;                                    //las vidas decrementarán y la velocidad de los perroMalos aumentará
             cont = 0;                                     //la cantidad de perroMalos volverá a ser 0
         }
-        
+
         //Actualiza la animacion creada de los objetos
         long tiempoTranscurrido = System.currentTimeMillis() - tiempoActual;
         tiempoActual += tiempoTranscurrido;
@@ -177,8 +176,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             Malo perroMalo = (Malo) lista.get(i);
             perroMalo.updateS(tiempoTranscurrido);
         }
-        
-       
+
         if (move) {
             switch (direccion) {
                 case 3: {
@@ -306,7 +304,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         // Dibuja la imagen Actualizada
         g.drawImage(dbImage, 0, 0, this);
     }
-    
+
     /**
      * Metodo <I>paint</I> sobrescrito de la clase <code>Applet</code>, heredado
      * de la clase Container.<P>
@@ -344,17 +342,15 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             g.drawImage(game_over, -100, -30, this);
         }
     }
-    
+
     public void keyPressed(KeyEvent e) {
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 
-            direccion = 3;
-            //Presiono flecha abajo
+            direccion = 3; //Presiono flecha abajo
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 
-            direccion = 4;
-            //Presiono flecha izquierda
+            direccion = 4; //Presiono flecha izquierda
 
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
             PAUSE = !PAUSE;
@@ -368,8 +364,9 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     }
 
     public void keyReleased(KeyEvent e) {
-        //Presiono flecha arriba
-        move = false;
+
+        move = false; //Presiono flecha arriba
+
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -396,21 +393,19 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     }
 
     public void mouseReleased(MouseEvent e) {
-        presionado = false;                 //cuando se deja de picar la bandera se apaga
+        presionado = false;    //cuando se deja de picar la bandera se apaga
     }
 
-    public void mouseMoved(MouseEvent e) {                   //metodos de MouseMotionListener
+    public void mouseMoved(MouseEvent e) {  //metodos de MouseMotionListener
 
     }
 
-    public void mouseDragged(MouseEvent e) {                //metodos de MouseMotionListener
+    public void mouseDragged(MouseEvent e) {   //metodos de MouseMotionListener
 
-        if (presionado) {                       //si la imagen está presionada y la imagen se mueve, se guardan posiciones
+        if (presionado) {   //si la imagen está presionada y la imagen se mueve, se guardan posiciones
             coordenada_x = e.getX();
             coordenada_y = e.getY();
         }
     }
-
-
 
 }
