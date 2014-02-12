@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author Juan
+ * @author Ferrufino
  */
 import javax.swing.ImageIcon;
 import java.awt.Image;
@@ -41,12 +35,12 @@ public class Base {
     }
 
     public int getAncho() {
-        
+
         return (new ImageIcon(animacion.getImagen()).getIconWidth());
     }
 
     public int getAlto() {
-        
+
         return (new ImageIcon(animacion.getImagen()).getIconHeight());
     }
 
@@ -67,16 +61,16 @@ public class Base {
     }
 
     public Rectangle getPerimRec() {                             //se hace el rectangulo pequeño 
-     
+
         return new Rectangle(getPosX() + 10, getPosY() + getAlto(), getAncho() - 20, 1);
     }
 
     public boolean intersecta(Malo obj) {
-       // return getPerimRec().intersects(obj.getPerimetro());
+        // return getPerimRec().intersects(obj.getPerimetro());
         return getPerimetro().intersects(obj.getPerimetro());
     }
-    
-    public void updateS(long t){
+
+    public void updateS(long t) {
         animacion.actualiza(t);
     }
 }
