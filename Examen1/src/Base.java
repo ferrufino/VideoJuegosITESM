@@ -26,7 +26,7 @@ public class Base {
     public Base(int posX, int posY) {
         this.posX = posX;
         this.posY = posY;
-    //    icono = new ImageIcon(image);
+       
 
     }
 

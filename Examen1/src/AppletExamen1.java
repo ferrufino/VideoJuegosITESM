@@ -50,7 +50,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
     private boolean draggedUp;  //El mouse se esta arrastrando hacia arriba
     private int AntiguaPosY; //Pasada posicion de Y
     private int AntiguaPosX; // Pasada posicion de X
-
+    private Bueno cat;
     /**
      * Metodo <I>init</I> sobrescrito de la clase <code>Applet</code>.<P>
      * En este metodo se inizializan las variables o se crean los objetos a
@@ -66,12 +66,13 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
         incrementoVelocidad = 1; // variable que controla la velocidad 
         //de los asteroides
         marcador = 0; //Cuantos puntos el usuario lleva (Asteroides elminidados)
-        URL eURL = this.getClass().getResource("images/earth.png");
-        earth = new Planeta(450, 650, Toolkit.getDefaultToolkit().getImage(eURL));
+      
+        
+        
+        cat = new Bueno(450, 650);
 
         contadorPerdidas = 0; // Si llega a 10  quita una vida 
-        URL rURL = this.getClass().getResource("images/asteroid.png");
-
+   /*
         //Create Asteroids Aarhus
         Asteroides = new LinkedList();
         cantAsteroides = (int) (Math.random() * 5) + 10;
@@ -85,9 +86,9 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
             Asteroides.add(Aarhus);
             i++;
         }
-
-        addMouseListener(this);
-        addMouseMotionListener(this);
+*/
+        //addMouseListener(this);
+       // addMouseMotionListener(this);
         //Se carga el sonido.
         URL baURL = this.getClass().getResource("sounds/bubibom.wav");
         bomb = getAudioClip(baURL);
@@ -144,7 +145,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      */
     public void actualiza() {
-
+/*
         //Acutaliza la posicion del asteroide dependiendo donde este el planeta
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
@@ -152,6 +153,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
             temp.setPosY(temp.getPosY() + incrementoVelocidad);
 
         }
+        */
 
     }
 
@@ -160,21 +162,21 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      * con las orillas del <code>Applet</code>.
      */
     public void checaColision() {
-        //Checa colision del planeta earth con el Applet
+        //Checa colision del planeta cat con el Applet
 
-        if (earth.getPosX() + earth.getAncho() > getWidth()) {
-            earth.setPosX(getWidth() - earth.getAncho());
+        if (cat.getPosX() + cat.getAncho() > getWidth()) {
+            cat.setPosX(getWidth() - cat.getAncho());
         }
-        if (earth.getPosX() < 0) {
-            earth.setPosX(0);
+        if (cat.getPosX() < 0) {
+            cat.setPosX(0);
         }
-        if (earth.getPosY() + earth.getAlto() > getHeight()) {
-            earth.setPosY(getHeight() - earth.getAlto());
+        if (cat.getPosY() + cat.getAlto() > getHeight()) {
+            cat.setPosY(getHeight() - cat.getAlto());
         }
-        if (earth.getPosY() < 0) {
-            earth.setPosY(0);
+        if (cat.getPosY() < 0) {
+            cat.setPosY(0);
         }
-
+/*
         //checa colision de asteroides con el applet
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
@@ -199,7 +201,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
         //Colision entre objetos
         for (int i = 0; i < Asteroides.size(); i++) {
             Asteroide temp = (Asteroide) Asteroides.get(i);
-            if (temp.intersecta(earth) && draggedUp) {
+            if (temp.intersecta(cat) && draggedUp) {
 
                 bomb.play();    //sonido al colisionar
                 marcador += 100;
@@ -209,7 +211,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
 
             }
         }
-
+*/
     }
 
     /**
@@ -248,7 +250,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      */
     public void paint(Graphics g) {
         if (vidas > 0) {
-            if (earth != null && Aarhus != null) {
+           // if (cat != null && Aarhus != null) {
 
                 g.drawImage(background, 0, 0, this);
                 //Dibuja los string de vidas y puntos // X,Y
@@ -257,16 +259,16 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
                 g.drawString("Puntos: " + marcador, 950, 20);
                 g.drawString("Vidas: " + vidas, 950, 60);
                 //Dibuja la imagen en la posicion actualizada
-                g.drawImage(earth.getImagenI(), earth.getPosX(), earth.getPosY(), this);
-                for (int i = 0; i < Asteroides.size(); i++) {
+                g.drawImage(cat.getImagenI(), cat.getPosX(), cat.getPosY(), this);
+               /* for (int i = 0; i < Asteroides.size(); i++) {
                     Asteroide temp = (Asteroide) Asteroides.get(i);
                     g.drawImage(temp.getImagenI(), temp.getPosX(), temp.getPosY(), this);
 
-                }
-            } else {
+              //  }
+          /*  } else {
                 //Da un mensaje mientras se carga el dibujo	
                 g.drawString("No se cargo la imagen..", 20, 20);
-            }
+            }*/
         } else {
             g.drawImage(gameover, 0, 0, this);
             g.setColor(Color.white);
@@ -286,13 +288,13 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      * @param e es el <code>evento</code> que se genera en apretar el boton
      */
-    public void mousePressed(MouseEvent e) {
+  /*  public void mousePressed(MouseEvent e) {
 
         mousePosX = e.getX();
         mousePosY = e.getY();
-        if (earth.intersectaPuntos(e.getX(), e.getY())) {
-            difPosX = earth.getPosX() - e.getX();
-            difPosY = earth.getPosY() - e.getY();
+        if (cat.intersectaPuntos(e.getX(), e.getY())) {
+            difPosX = cat.getPosX() - e.getX();
+            difPosY = cat.getPosY() - e.getY();
             planetClicked = true;
             draggedUp = true;
         }
@@ -308,7 +310,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      * @param e es el <code>evento</code> que se genera en apretar el boton y
      * soltar el boton
      */
-    public void mouseClicked(MouseEvent e) {
+ /*   public void mouseClicked(MouseEvent e) {
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -320,7 +322,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      * @param e es el <code>evento</code> que se genera en soltar el boton
      */
-    public void mouseReleased(MouseEvent e) {
+ /*   public void mouseReleased(MouseEvent e) {
         planetClicked = false;
         draggedUp = false;
     }
@@ -333,12 +335,12 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      * @param e es el <code>evento</code> que se genera en mover el mouse
      */
-    public void mouseDragged(MouseEvent e) {
+  /*  public void mouseDragged(MouseEvent e) {
         if (planetClicked) {
-            AntiguaPosY = earth.getPosY();
-            AntiguaPosX = earth.getPosX();
-            earth.setPosX(earth.getPosX() + (e.getX() - mousePosX));
-            earth.setPosY(earth.getPosY() + (e.getY() - mousePosY));
+            AntiguaPosY = cat.getPosY();
+            AntiguaPosX = cat.getPosX();
+            cat.setPosX(cat.getPosX() + (e.getX() - mousePosX));
+            cat.setPosY(cat.getPosY() + (e.getY() - mousePosY));
             mousePosX = e.getX();
             mousePosY = e.getY();
             if ((AntiguaPosY > mousePosY) && (!(mousePosX > AntiguaPosX + 100) || !(mousePosX < AntiguaPosX - 100))) {
@@ -358,7 +360,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      * @param e es el <code>evento</code> que se genera al enter el mouse
      */
-    public void mouseEntered(MouseEvent e) {
+  /*  public void mouseEntered(MouseEvent e) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -369,7 +371,7 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      * @param e es el <code>evento</code> que se genera al enter el mouse
      */
-    public void mouseExited(MouseEvent e) {
+/*    public void mouseExited(MouseEvent e) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -380,8 +382,8 @@ public class AppletExamen1 extends Applet implements Runnable/*, MouseListener,
      *
      * @param e es el <code>evento</code> que se genera al mover el mouse
      */
-    public void mouseMoved(MouseEvent e) {
+  /*  public void mouseMoved(MouseEvent e) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+*/
 }

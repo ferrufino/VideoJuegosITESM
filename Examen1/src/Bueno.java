@@ -15,45 +15,39 @@ public class Bueno extends Base {
     static String PAUSADO;
     Animacion anim;
 
-    /**ñ
+    /**
+     * 
      * Metodo constructor que hereda los atributos de la clase
-     * <code>Figura</code>.
+     * <code>Base</code>.
      *
      * @param posX es la <code>posiscion en x</code> del objeto planeta.
      * @param posY es el <code>posiscion en y</code> del objeto planeta.
-     * @param image es la <code>imagen</code> del objeto planeta.
      */
     public Bueno(int posX, int posY) {
-        super(posX, posY);
+       
+       super(posX, posY);
+        
         //Se cargan las imágenes(cuadros) para la animación
-		Image cat1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse1.png"));
-		Image cat2 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse2.png"));
-		Image raton3 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse3.png"));
-		Image raton4 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse4.png"));
-		Image raton5 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse5.png"));
-		Image raton6 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse6.png"));
-		Image raton7 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse7.png"));
-		Image raton8 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse8.png"));
-		Image raton9 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse9.png"));
-		Image raton10 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse10.png"));
-		Image raton11 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse11.png"));
-		Image raton12 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("imagenes/mouse12.png"));
-                
-                //Se crea la animación
-		anim = new Animacion();
-		anim.sumaCuadro(cat1, 100);
-		anim.sumaCuadro(cat2, 100);
-		anim.sumaCuadro(raton3, 100);
-		anim.sumaCuadro(raton4, 100);
-		anim.sumaCuadro(raton5, 100);
-		anim.sumaCuadro(raton6, 100);
-		anim.sumaCuadro(raton7, 100);
-		anim.sumaCuadro(raton8, 100);
-		anim.sumaCuadro(raton9, 100);
-		anim.sumaCuadro(raton10, 100);
-		anim.sumaCuadro(raton11, 100);
-		anim.sumaCuadro(raton12, 100);
+        Image cat1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/cat1.png"));
+        Image cat2 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/cat2.png"));
+        Image cat3 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/cat3.png"));
+        Image cat4 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/cat4.png"));
+        Image cat5 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/cat5.png"));
+        Image cat6 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/cat6.png"));
+        Image cat7 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/cat7.png"));
 
+        //Se crea la animación
+        anim = new Animacion();
+        anim.sumaCuadro(cat1, 100);
+        anim.sumaCuadro(cat2, 100);
+        anim.sumaCuadro(cat3, 100);
+        anim.sumaCuadro(cat4, 100);
+        anim.sumaCuadro(cat5, 100);
+        anim.sumaCuadro(cat6, 100);
+        anim.sumaCuadro(cat7, 100);
+        
+       //Se guarda la animacion
+        super.setAnimacion(anim);
 
     }
 
