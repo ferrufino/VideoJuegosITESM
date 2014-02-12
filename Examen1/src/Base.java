@@ -31,6 +31,21 @@ public class Base {
     }
 
     /**
+     * Metodo modificador usado para asignar la animacion creada del objeto
+     *
+     * @param ani es la <code>animacion creada del</code> del objeto.
+     */
+    public void setAnimacion(Animacion ani) {
+        animacion=ani;
+    }
+    /**
+     * Metodo de acceso que regresa la animacion del objeto
+     *
+     * @return animacion es la <code>animacion creada</code> del objeto.
+     */
+    public Animacion getAnimacion() {
+        return animacion;
+    }    /**
      * Metodo modificador usado para cambiar la posicion en x del objeto
      *
      * @param posX es la <code>posicion en x</code> del objeto.
@@ -38,7 +53,7 @@ public class Base {
     public void setPosX(int posX) {
         this.posX = posX;
     }
-
+   
     /**
      * Metodo de acceso que regresa la posicion en x del objeto
      *

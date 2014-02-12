@@ -23,5 +23,21 @@ public class Malo extends Base {
         super(posX, posY);
 
     }
+    /**
+     * Metodo modificador usado para cambiar la posicion en x del objeto
+     *
+     * @param CONTEO es la <code>posicion en x</code> del objeto.
+     */
+    public void setConteo(String c) {
+        CONTEO = c;
+    }
 
+    /**
+     * Metodo modificador usado para cambiar la posicion en x del objeto
+     *
+     * @param CONTEO es la <code>posicion en x</code> del objeto.
+     */
+    public String getConteo() {
+        return CONTEO;
+    }
 }
