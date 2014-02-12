@@ -32,14 +32,15 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     private Graphics dbg;	// Objeto grafico
     private AudioClip sonido;    // Objeto AudioClip
     private AudioClip rat;    // Objeto AudioClip
-    private AudioClip bomb;    //Objeto AudioClip 
+    private AudioClip COLLIDE;    //Objeto AudioClip 
     private Bueno gatoBueno;    // Objeto de la clase Elefante
     private Malo perroMalo;   //Objeto de la clase Raton
     private LinkedList lista;           //lista de perroMaloes
     private int cant;               //cantidad de perroMalos
     private int mayor;
     private int menor;
-    private boolean PRESSED;
+    private int contRetard;    //Contador temporalmente para imagen choque
+    private boolean ICONPRESSED;
     private int coordenada_x;
     private int coordenada_y;
     private int off_x;
@@ -47,21 +48,23 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     private int VIDAS;
     private Image GAMEOVER;
     private Image BACKGROUND;
+     private Image Chocan;
     private int direccion;
-    private int posrX;
-    private int posrY;
+    private int posX;
+    private int posY;
     private int SCORE;
     private int cont;
     private int x_mayor;
-    private int x_menor;
-    private int y_mayor;
-    private int y_menor;
+    private int xMenor;
+    private int yMayor;
+    private int yMenor;
     private boolean PAUSE; //Permite al usuario pausar el juego
-    private boolean flag;
-    private boolean DRAG;
+    private boolean ACTION;
     private long tiempoActual;
     private long tiempoInicial;
     private boolean BEGIN;
+    private boolean crashed;
+
 
     /**
      * Metodo <I>init</I> sobrescrito de la clase <code>Applet</code>.<P>
@@ -71,11 +74,11 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
     public void init() {
         
         resize(1000, 717);
-        
+        crashed=false;
         BEGIN = true;
         PAUSE = true;
-        DRAG = false;
-
+        ACTION = false;
+        contRetard = 0;
         direccion = 0;
         menor = 0;                    //cantidad minima de perroMalos que se generarán al azar
         mayor = 3;                    //cantidad máxima de perroMalos que se generarán al azar
@@ -83,28 +86,28 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         VIDAS = 5;                    //vidaas iniciales
         cont = 0;                     //contadaor que indica cuantos perroMalos han golpeado el fondo del applet
         x_mayor = (getWidth() - getWidth() / 10);           //posicion máxima en x que tendrán los perroMalos
-        x_menor = 0;           //posicion mínima en x que tendrán los perroMalos
-        y_mayor = -100;          //posicion máxima en y que tendrán los perroMalos
-        y_menor = -200;        //posicion mínima en y que tendrán los perroMalos
-        flag = false;
+        xMenor = 0;           //posicion mínima en x que tendrán los perroMalos
+        yMayor = -100;          //posicion máxima en y que tendrán los perroMalos
+        yMenor = -200;        //posicion mínima en y que tendrán los perroMalos
+
 
         //Se cargan los sonidos.
-        URL beURL = this.getClass().getResource("sounds/boom.wav");
+        URL beURL = this.getClass().getResource("sounds/fail-buzzer-03.wav");
         sonido = getAudioClip(beURL);
-        URL baURL = this.getClass().getResource("sounds/Explosion.wav");
-        bomb = getAudioClip(baURL);
+        URL baURL = this.getClass().getResource("sounds/Choque.wav");
+        COLLIDE = getAudioClip(baURL);
         
         //Se cargan las imagenes
         lista = new LinkedList();
 
         cant = 3;            //se crea la cantidad de perroMalos al azar
         while (cant != 0) {
-            posrX = ((int) (Math.random() * (x_mayor - x_menor))) + x_menor;     //se generarán los perroMalos en posiciones aleatorias fuera del applet
-            posrY = ((int) (Math.random() * (y_mayor - y_menor))) + y_menor;
+            posX = ((int) (Math.random() * (x_mayor - xMenor))) + xMenor;     //se generarán los perroMalos en posiciones aleatorias fuera del applet
+            posY = ((int) (Math.random() * (yMayor - yMenor))) + yMenor;
 
-            perroMalo = new Malo(posrX, posrY);
-            perroMalo.setPosX(posrX);
-            perroMalo.setPosY(posrY);
+            perroMalo = new Malo(posX, posY);
+            perroMalo.setPosX(posX);
+            perroMalo.setPosY(posY);
             lista.add(perroMalo);
             cant--;
         }
@@ -119,6 +122,8 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         URL bgURL = this.getClass().getResource("images/background.jpg");
         BACKGROUND = Toolkit.getDefaultToolkit().getImage(bgURL);
      
+        URL cHURL = this.getClass().getResource("images/boom.png");
+        Chocan = Toolkit.getDefaultToolkit().getImage(cHURL);
 
         //Inicializadores 
         addKeyListener(this);
@@ -184,7 +189,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             perroMalo.updateS(tiempoTranscurrido);
         }
 
-        if (DRAG) {
+        if (ACTION) {
             switch (direccion) {
                 case 3: {
 
@@ -199,7 +204,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             }
         }
 
-        if (PRESSED) {                              //si la imagen sigue presionda, se Actualizan las posiciones de x y de y
+        if (ICONPRESSED) {                              //si la imagen sigue presionda, se Actualizan las posiciones de x y de y
             gatoBueno.setPosY(coordenada_y - off_y);
             gatoBueno.setPosX(coordenada_x - off_x);
 
@@ -242,19 +247,10 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
 
         for (int i = 0; i < lista.size(); i++) {
             Malo perroMalo = (Malo) lista.get(i);
-            if (perroMalo.getPosX() < 0) {                                          //cuando el perroMalo llega al lado izquierdo del applet...
+           if (perroMalo.getPosY() + perroMalo.getAlto() > getHeight()) {    //perroMalo colisiona abajo del applet
                 sonido.play();
-                perroMalo.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                            //se reposiciona en su posicion inicial
-                perroMalo.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
-                if (SCORE > 0) {                                                 //si el puntaje es mayor a 0..se quitan 20 puntos
-                    SCORE -= 20;
-                }
-                cont++;                                                         //el contador incrementa en 1 cuando topa en el fondo 
-
-            } else if (perroMalo.getPosY() + perroMalo.getAlto() > getHeight()) {              //cuando el perroMalo llega al lado de abajo del applet...
-                sonido.play();
-                perroMalo.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);                                           //se reposiciona en su posicion inicial
-                perroMalo.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+                perroMalo.setPosX(((int) (Math.random() * (x_mayor - xMenor))) + xMenor);                                           //se reposiciona en su posicion inicial
+                perroMalo.setPosY(((int) (Math.random() * (yMayor - yMenor))) + yMenor);
                 if (SCORE > 0) //si el puntaje es mayor a 0..se quitan 20 puntos
                 {
                     SCORE -= 20;
@@ -269,17 +265,13 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         for (int i = 0; i < lista.size(); i++) {
             Malo perroMalo = (Malo) lista.get(i);
 
-            if (gatoBueno.intersecta(perroMalo) && !(gatoBueno.intersek(perroMalo))) {          //si intersectó con el perroMalo pero no al rectangulo chico
-                flag = true;                                            //entró por arriba
-
-            } else if (!(gatoBueno.intersecta(perroMalo)) && flag) {     //si dejo de intersectar y la la booleana que checa si entro por arriba esta prendida
-                flag = false;                                               //laa bandera se apaga
-
-            } else if (!(flag) && gatoBueno.intersek(perroMalo)) {         // no entró por arriba (o por los lados) e intersecto con el rectangulo chiquito, entró por donde debía de entrar
-                bomb.play();
+            if (gatoBueno.intersecta(perroMalo)) {
+                //&&dragged up
+                crashed=true;
+                COLLIDE.play();
                 SCORE += 100;
-                perroMalo.setPosX(((int) (Math.random() * (x_mayor - x_menor))) + x_menor);     // se reposiciona el perroMalo
-                perroMalo.setPosY(((int) (Math.random() * (y_mayor - y_menor))) + y_menor);
+                perroMalo.setPosX(((int) (Math.random() * (x_mayor - xMenor))) + xMenor);     // se reposiciona el perroMalo
+                perroMalo.setPosY(((int) (Math.random() * (yMayor - yMenor))) + yMenor);
 
             }
 
@@ -333,11 +325,12 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
                     
 
                    
-                        g.setColor(Color.white);
+                        g.setColor(Color.black);
                         g.setFont(new Font("Avenir Black", Font.BOLD, 30));
-                        g.drawString("Dale click a la pantalla", 250, 200);
-                        g.drawString("y Oprime 'P' solo una vez para Comenzar!", 250, 250);
+                        g.drawString("Dale click a la pantalla solo una vez", 250, 100);
+                        g.drawString("y Oprime 'P' para Comenzar/Pausar el juego!", 250, 150);
                         g.setFont(new Font("Avenir Black", Font.BOLD, 60));
+                         g.setColor(Color.white);
                         g.drawString(gatoBueno.getPausado(), 400, 400);
                  
                         
@@ -353,7 +346,16 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
                     g.drawString("Vidas: " + VIDAS, 850, 60);
 
                     //Dibuja la imagen en la posicion Actualizada
+                    if(!crashed && (contRetard<20)){
                     g.drawImage(gatoBueno.getImagenI(), gatoBueno.getPosX(), gatoBueno.getPosY(), this);
+                    } else {
+                        g.drawImage(Chocan, gatoBueno.getPosX(), gatoBueno.getPosY(), this);
+                        contRetard++;
+                        if(contRetard == 19){
+                            crashed=false;
+                            contRetard=0;
+                        }
+                    }
                     g.setColor(Color.white);
 
                     for (int i = 0; i < lista.size(); i++) {
@@ -390,7 +392,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             PAUSE = !PAUSE;
 
         }
-        DRAG = true;
+        ACTION = true;
 
     }
 
@@ -399,7 +401,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
 
     public void keyReleased(KeyEvent e) {
 
-        DRAG = false; //Presiono flecha arriba
+        ACTION = false; //Presiono flecha arriba
 
     }
 
@@ -417,17 +419,18 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
 
     public void mousePressed(MouseEvent e) {
 
-        if (gatoBueno.contiene(e.getX(), e.getY()) & !PRESSED) { //si hice click dentro del rectangulo y no esta PRESSED
-            coordenada_x = e.getX();            //se procede a guardar coordenadas
+        if (gatoBueno.intersectaPuntos(e.getX(), e.getY()) & !ICONPRESSED) { 
+            coordenada_x = e.getX();           
             coordenada_y = e.getY();
-            off_x = e.getX() - gatoBueno.getPosX(); //se calcula la diferencia para el desface
-            off_y = e.getY() - gatoBueno.getPosY(); //se calcula la diferencia para el desface
-            PRESSED = true;
+            off_x = e.getX() - gatoBueno.getPosX(); 
+            off_y = e.getY() - gatoBueno.getPosY(); 
+            ICONPRESSED = true;
+            //draggedUP=true;
         }
     }
 
     public void mouseReleased(MouseEvent e) {
-        PRESSED = false;    //cuando se deja de picar la bandera se apaga
+        ICONPRESSED = false;    
     }
 
     public void mouseMoved(MouseEvent e) {  //metodos de MouseMotionListener
@@ -436,7 +439,7 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
 
     public void mouseDragged(MouseEvent e) {   //metodos de MouseMotionListener
 
-        if (PRESSED) {   //si la imagen está presionada y la imagen se mueve, se guardan posiciones
+        if (ICONPRESSED) {   //si la imagen está presionada y la imagen se mueve, se guardan posiciones
             coordenada_x = e.getX();
             coordenada_y = e.getY();
         }

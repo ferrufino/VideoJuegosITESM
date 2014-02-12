@@ -41,10 +41,12 @@ public class Base {
     }
 
     public int getAncho() {
+        
         return (new ImageIcon(animacion.getImagen()).getIconWidth());
     }
 
     public int getAlto() {
+        
         return (new ImageIcon(animacion.getImagen()).getIconHeight());
     }
 
@@ -56,26 +58,22 @@ public class Base {
         return new Rectangle(getPosX(), getPosY(), getAncho(), getAlto());
     }
 
-    public boolean intersecta(Base obj) {
+    public boolean intersecta2(Base obj) {
         return getPerimetro().intersects(obj.getPerimetro());
     }
 
-    public boolean contiene(int posX, int posY) {
+    public boolean intersectaPuntos(int posX, int posY) {
         return getPerimetro().contains(posX, posY);
     }
 
-    public Rectangle getRect() {                             //se hace el rectangulo pequeño 
-        int x = getPosX() + getAncho() / 4;
-        int y = getPosY() + (getAlto() * 3 / 4);
-        int wi = getAncho() / 2;
-        int ht = getAlto() / 4;
-
-        return new Rectangle(x, y, wi, ht);
-
+    public Rectangle getPerimRec() {                             //se hace el rectangulo pequeño 
+     
+        return new Rectangle(getPosX() + 10, getPosY() + getAlto(), getAncho() - 20, 1);
     }
 
-    public boolean intersek(Base obj) {
-        return getPerimetro().intersects(obj.getRect());
+    public boolean intersecta(Malo obj) {
+       // return getPerimRec().intersects(obj.getPerimetro());
+        return getPerimetro().intersects(obj.getPerimetro());
     }
     
     public void updateS(long t){
