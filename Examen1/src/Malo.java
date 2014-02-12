@@ -22,7 +22,9 @@ public class Malo extends Base {
         animacion.sumaCuadro(malo3, 100);
         animacion.sumaCuadro(malo4, 100);
       
-        SPEED = (int) ((Math.random() * (9))+ 1);
+        SPEED = (int) ((Math.random() * (4))+ 1);
+        
+        //CONTEO
     }
     
 

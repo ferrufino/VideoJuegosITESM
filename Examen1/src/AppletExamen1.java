@@ -192,12 +192,12 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
             switch (direccion) {
                 case 3: {
 
-                    gatoBueno.setPosX(gatoBueno.getPosX() - 1);
+                    gatoBueno.setPosX(gatoBueno.getPosX() - 5);
                     break; //se mueve hacia la izquierda
                 }
                 case 4: {
 
-                    gatoBueno.setPosX(gatoBueno.getPosX() + 1);
+                    gatoBueno.setPosX(gatoBueno.getPosX() + 5);
                     break; //se mueve hacia la derecha
                 }
             }
@@ -210,11 +210,11 @@ public class AppletExamen1 extends Applet implements Runnable, KeyListener, Mous
         }
 
         for (int i = 0; i < lista.size(); i++) {
-            Malo perroMalo = (Malo) lista.get(i);                         // se hace el cast para cada perroMalo
+            Malo perroMalo = (Malo) lista.get(i);  // 
             if (perroMalo.getPosY() < getHeight()) {
-                //si la Y de los perroMalos son menores a la altura del applet
+               
                 //perroMalo.setPosY(perroMalo.getPosY() + (int) (Math.random() * 5 + 1));
-                perroMalo.setPosY(perroMalo.getPosY() + perroMalo.getSpeed());       //iran bajando 
+                perroMalo.setPosY(perroMalo.getPosY() + perroMalo.getSpeed());       
             }
 
         }
