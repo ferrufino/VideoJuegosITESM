@@ -1,17 +1,13 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *Class JavaFrameExamen1
+ *
+ *@Author Gustavo Ferrufino
+ *@Matricula A00812572
  */
-
 package javaframeexamen1;
 
 import javax.swing.JFrame;
 
-/**
- *
- * @author Ferrufino
- */
 public class JavaFrameExamen1 {
 
     /**
@@ -22,5 +18,5 @@ public class JavaFrameExamen1 {
         variable.setVisible(true);
         variable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    
+
 }

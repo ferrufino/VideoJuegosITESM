@@ -1,18 +1,11 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *Class AppletExamen1
+ *
+ *@Author Gustavo Ferrufino
+ *@Matricula A00812572
  */
-
 package javaframeexamen1;
-/**
- * @(#)Colisiones.java
- *
- * Colisiones Applet application
- *
- * @author Antonio Mejorado
- * @version 1.00 2008/6/18
- */
+
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Graphics;
@@ -55,7 +48,7 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
     private int VIDAS;
     private Image gameover;
     private Image background;
-     private Image chocan;
+    private Image chocan;
     private int direccion;
     private int posX;
     private int posY;
@@ -72,45 +65,36 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
     private boolean BEGIN;
     private boolean crashed;
     private int CUADRANTE;
-    
-//constructor
-public AppletExamen1(){
 
-        setSize(1000,700);
-        crashed=false;
+//constructor
+    public AppletExamen1() {
+
+        setSize(1000, 700);
+        crashed = false;
         BEGIN = true;
         PAUSE = false;
         ACTION = false;
         timeRetard = 0;
         direccion = 0;
-        
+
         SCORE = 0;                    //puntaje inicial
         VIDAS = 1;                    //vida inicial
         xMayor = (getWidth() - getWidth() / 10);           //posicion máxima en x que tendrán los perroMalos
         xMenor = 0;           //posicion mínima en x que tendrán los perroMalos
-        yMayor = (getHeight()-(getHeight() / 10));          //posicion máxima en y que tendrán los perroMalos
+        yMayor = (getHeight() - (getHeight() / 10));          //posicion máxima en y que tendrán los perroMalos
         yMenor = 10;        //posicion mínima en y que tendrán los perroMalos
-
 
         //Se cargan los sonidos.
         URL beURL = this.getClass().getResource("sounds/fail-buzzer-03.wav");
         fail = new SoundClip("sounds/fail-buzzer-03.wav");
         URL baURL = this.getClass().getResource("sounds/Choque.wav");
         collide = new SoundClip("sounds/Choque.wav");
-        
+
         //Se cargan la lista de objetos malos Izq
         listaIzq = new LinkedList();
 
-        cantidad = ((int) Math.random() * 3 +1);            //cantidad de perroMalos al azar
-        if(cantidad == 1){
-            cantidad=6;
-        } else if (cantidad == 2) {
-            cantidad = 10;
-        } else if (cantidad == 3) {
-            cantidad =12;
-        } else {
-            cantidad=0;
-        }
+        int[] array1 = new int[]{6, 10, 12};
+        cantidad = array1[(int) Math.random() * 3];
         while (cantidad != 0) {
             posX = (-10);     //se generarán los perroMalos en posiciones aleatorias fuera del applet
             posY = ((int) (Math.random() * (yMayor - yMenor))) + yMenor;
@@ -121,20 +105,12 @@ public AppletExamen1(){
             listaIzq.add(perroMalo);
             cantidad--;
         }
-        
-   //Se cargan la lista de objetos malos Der
+
+        //Se cargan la lista de objetos malos Der
         listaDer = new LinkedList();
 
-        cantidad = ((int) Math.random() * 3 +1);            //cantidad de perroMalos al azar
-        if(cantidad == 1){
-            cantidad=6;
-        } else if (cantidad == 2) {
-            cantidad = 10;
-        } else if (cantidad == 3) {
-            cantidad =12;
-        } else {
-            cantidad=0;
-        }
+        int[] array2 = new int[]{6, 10, 12};
+        cantidad = array2[(int) Math.random() * 3];
         while (cantidad != 0) {
             posX = (1100);     //se generarán los perroMalos en posiciones aleatorias fuera del applet
             posY = ((int) (Math.random() * (yMayor - yMenor))) + yMenor;
@@ -155,7 +131,7 @@ public AppletExamen1(){
 
         URL bgURL = this.getClass().getResource("images/background.jpg");
         background = Toolkit.getDefaultToolkit().getImage(bgURL);
-     
+
         URL cHURL = this.getClass().getResource("images/boom.png");
         chocan = Toolkit.getDefaultToolkit().getImage(cHURL);
 
@@ -163,16 +139,15 @@ public AppletExamen1(){
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-        /***/
-       // Declaras un hilo
+        /**
+         * 
+         */
+        // Declaras un hilo
         Thread th = new Thread(this);
         // Empieza el hilo
         th.start();
 
-
-}
-
-
+    }
 
     /**
      * Metodo <I>run</I> sobrescrito de la clase <code>Thread</code>.<P>
@@ -204,7 +179,6 @@ public AppletExamen1(){
      */
     public void Actualiza() {
 
-      
         switch (CUADRANTE) {
             case 3: {
 
@@ -252,23 +226,23 @@ public AppletExamen1(){
             }
         }
 
-        if (IconPressed) {                              
+        if (IconPressed) {
             gatoBueno.setPosY(coordenada_y - off_y);
             gatoBueno.setPosX(coordenada_x - off_x);
 
         }
 
         for (int i = 0; i < listaIzq.size(); i++) {
-            Malo perroMalo = (Malo) listaIzq.get(i);                      
+            Malo perroMalo = (Malo) listaIzq.get(i);
             if (perroMalo.getPosY() < getHeight()) {
-                 perroMalo.setPosX(perroMalo.getPosX() + perroMalo.getSpeed());       //se mueven de izq a derecha 
+                perroMalo.setPosX(perroMalo.getPosX() + perroMalo.getSpeed());       //se mueven de izq a derecha 
             }
 
         }
-           for (int i = 0; i < listaDer.size(); i++) {
-            Malo perroMalo = (Malo) listaDer.get(i);                      
+        for (int i = 0; i < listaDer.size(); i++) {
+            Malo perroMalo = (Malo) listaDer.get(i);
             if (perroMalo.getPosY() < getHeight()) {
-                 perroMalo.setPosX(perroMalo.getPosX() - perroMalo.getSpeed());       //se mueven de der a izq
+                perroMalo.setPosX(perroMalo.getPosX() - perroMalo.getSpeed());       //se mueven de der a izq
             }
 
         }
@@ -297,10 +271,10 @@ public AppletExamen1(){
         if (gatoBueno.getPosX() + gatoBueno.getAncho() > getWidth()) {      //si se pasa del borde de la derecha, la imagen se pone al raz
             gatoBueno.setPosX(getWidth() - gatoBueno.getAncho());
         }
-            //Listas encadenada de malos de Izq a Derecha
+        //Listas encadenada de malos de Izq a Derecha
         for (int i = 0; i < listaIzq.size(); i++) {
             Malo perroMalo = (Malo) listaIzq.get(i);
-           if (perroMalo.getPosX() + perroMalo.getAncho() > getWidth()) {    //perroMalo colisiona a la derecha del applet
+            if (perroMalo.getPosX() + perroMalo.getAncho() > getWidth()) {    //perroMalo colisiona a la derecha del applet
                 fail.play();
                 perroMalo.setPosX(-10);                                           //se reposiciona en su posicion inicial
                 perroMalo.setPosY(((int) (Math.random() * (yMayor - yMenor))) + yMenor);
@@ -310,7 +284,7 @@ public AppletExamen1(){
         //Listas encadenada de malos de Derecha a Izq
         for (int i = 0; i < listaDer.size(); i++) {
             Malo perroMalo = (Malo) listaDer.get(i);
-           if (perroMalo.getPosX() + perroMalo.getAncho() < 0) {    //perroMalo colisiona a la derecha del applet
+            if (perroMalo.getPosX() + perroMalo.getAncho() < 0) {    //perroMalo colisiona a la derecha del applet
                 fail.play();
                 perroMalo.setPosX(1100);                                           //se reposiciona en su posicion inicial
                 perroMalo.setPosY(((int) (Math.random() * (yMayor - yMenor))) + yMenor);
@@ -325,7 +299,7 @@ public AppletExamen1(){
 
             if (gatoBueno.intersecta(perroMalo)) {
                 //&&dragged up
-                crashed=true;
+                crashed = true;
                 collide.play();
                 SCORE += 100;
                 perroMalo.setConteo(perroMalo.getConteo() + 1);
@@ -335,13 +309,13 @@ public AppletExamen1(){
             }
 
         }
-           //Lista Der
+        //Lista Der
         for (int i = 0; i < listaDer.size(); i++) {
             Malo perroMalo = (Malo) listaDer.get(i);
 
             if (gatoBueno.intersecta(perroMalo)) {
-         
-                crashed=true;
+
+                crashed = true;
                 collide.play();
                 SCORE += 100;
                 perroMalo.setConteo(perroMalo.getConteo() + 1);
@@ -354,8 +328,8 @@ public AppletExamen1(){
     }
 
     /**
-     * Metodo <I>paint</I> sobrescrito de la clase <code>Applet</code>,
-     * heredado de la clase Container.<P>
+     * Metodo <I>paint</I> sobrescrito de la clase <code>Applet</code>, heredado
+     * de la clase Container.<P>
      * En este metodo lo que hace es Actualizar el Paint
      *
      * @param g es el <code>objeto grafico</code> usado para dibujar.
@@ -380,8 +354,8 @@ public AppletExamen1(){
     }
 
     /**
-     * Metodo <I>paint1</I> sobrescrito de la clase <code>Applet</code>, heredado
-     * de la clase Container.<P>
+     * Metodo <I>paint1</I> sobrescrito de la clase <code>Applet</code>,
+     * heredado de la clase Container.<P>
      * En este metodo se dibuja la imagen con la posicion Actualizada, ademas
      * que cuando la imagen es cargada te despliega una advertencia.
      *
@@ -390,39 +364,31 @@ public AppletExamen1(){
     public void paint1(Graphics g) {
         if (VIDAS > 0) {
             if (gatoBueno != null && listaIzq != null) {
-                
-                   g.drawImage(background, 0, 0, this);
-           
-                      
-                
+
+                g.drawImage(background, 0, 0, this);
 
                 if (PAUSE) {
-                  
-                        g.setFont(new Font("Avenir Black", Font.BOLD, 60));
-                         g.setColor(Color.white);
-                        g.drawString(gatoBueno.getPausado(), 400, 400);
-                 
-                        
-                   
+
+                    g.setFont(new Font("Avenir Black", Font.BOLD, 60));
+                    g.setColor(Color.white);
+                    g.drawString(gatoBueno.getPausado(), 400, 400);
 
                 } else {
 
-                    
                     //Dibuja string Score
                     g.setColor(Color.black);
                     g.setFont(new Font("Avenir Black", Font.BOLD, 18));
                     g.drawString("Score: " + perroMalo.getConteo(), 850, 60);
-                    
 
                     //Dibuja la imagen en la posicion Actualizada
-                    if(!crashed && (timeRetard<20)){
-                    g.drawImage(gatoBueno.getImagenI(), gatoBueno.getPosX(), gatoBueno.getPosY(), this);
+                    if (!crashed && (timeRetard < 20)) {
+                        g.drawImage(gatoBueno.getImagenI(), gatoBueno.getPosX(), gatoBueno.getPosY(), this);
                     } else {
                         g.drawString(gatoBueno.getGone(), gatoBueno.getPosX(), gatoBueno.getPosY());
                         timeRetard++;
-                        if(timeRetard == 19){
-                            crashed=false;
-                            timeRetard=0;
+                        if (timeRetard == 19) {
+                            crashed = false;
+                            timeRetard = 0;
                         }
                     }
                     g.setColor(Color.white);
@@ -432,14 +398,12 @@ public AppletExamen1(){
                         g.drawImage(perroMalo.getImagenI(), perroMalo.getPosX(), perroMalo.getPosY(), this);
                     }
                     //Lista de Derecha a Izq
-                        for (int i = 0; i < listaDer.size(); i++) {
+                    for (int i = 0; i < listaDer.size(); i++) {
                         Malo perroMalo = (Malo) listaDer.get(i);
                         g.drawImage(perroMalo.getImagenI(), perroMalo.getPosX(), perroMalo.getPosY(), this);
                     }
 
                 }
-
-   
 
             } else {
                 //Da un mensaje mientras se carga el dibujo	
@@ -456,13 +420,13 @@ public AppletExamen1(){
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 
             direccion = 3; //Presiono flecha abajo
-            
+
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 
             direccion = 4; //Presiono flecha izquierda
 
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
-            
+
             PAUSE = !PAUSE;
 
         }
@@ -481,7 +445,7 @@ public AppletExamen1(){
 
     public void mouseClicked(MouseEvent e) {
 
-          if ((e.getX() < getWidth() / 2) && (e.getY() < getHeight() / 2)) {
+        if ((e.getX() < getWidth() / 2) && (e.getY() < getHeight() / 2)) {
 
             CUADRANTE = 4; // El mouse fue presionado
 
@@ -510,18 +474,18 @@ public AppletExamen1(){
 
     public void mousePressed(MouseEvent e) {
 
-        if (gatoBueno.intersectaPuntos(e.getX(), e.getY()) & !IconPressed) { 
-            coordenada_x = e.getX();           
+        if (gatoBueno.intersectaPuntos(e.getX(), e.getY()) & !IconPressed) {
+            coordenada_x = e.getX();
             coordenada_y = e.getY();
-            off_x = e.getX() - gatoBueno.getPosX(); 
-            off_y = e.getY() - gatoBueno.getPosY(); 
+            off_x = e.getX() - gatoBueno.getPosX();
+            off_y = e.getY() - gatoBueno.getPosY();
             IconPressed = true;
             //draggedUP=true;
         }
     }
 
     public void mouseReleased(MouseEvent e) {
-        IconPressed = false;    
+        IconPressed = false;
     }
 
     public void mouseMoved(MouseEvent e) {  //metodos de MouseMotionListener

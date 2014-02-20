@@ -1,9 +1,9 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *Class Base
+ *
+ *@Author Gustavo Ferrufino
+ *@Matricula A00812572
  */
-
 package javaframeexamen1;
 
 import javax.swing.ImageIcon;
