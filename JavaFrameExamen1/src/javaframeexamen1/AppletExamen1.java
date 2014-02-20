@@ -71,20 +71,21 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
     private long tiempoInicial;
     private boolean BEGIN;
     private boolean crashed;
+    private int CUADRANTE;
     
 //constructor
 public AppletExamen1(){
 
-        setSize(1000,800);
+        setSize(1000,700);
         crashed=false;
         BEGIN = true;
-        PAUSE = true;
+        PAUSE = false;
         ACTION = false;
         POINTSRetard = 0;
         direccion = 0;
         
         SCORE = 0;                    //puntaje inicial
-        VIDAS = 1;                    //vidas iniciales
+        VIDAS = 100;                    //vidas iniciales
         POINTS = 0;                     //POINTSadaor que indica cuantos perroMalos han golpeado el fondo del applet
         xMayor = (getWidth() - getWidth() / 10);           //posicion máxima en x que tendrán los perroMalos
         xMenor = 0;           //posicion mínima en x que tendrán los perroMalos
@@ -174,6 +175,28 @@ public AppletExamen1(){
         if (POINTS >= 10) {                                   //cuando la cantidadidad de perroMalos que golpearon el piso sea 10..
             VIDAS--;                                    //las VIDAS decrementarán y la velocidad de los perroMalos aumentará
             POINTS = 0;                                     //la cantidadidad de perroMalos volverá a ser 0
+        }
+        switch (CUADRANTE) {
+            case 3: {
+
+                gatoBueno.setPosY(gatoBueno.getPosY() + gatoBueno.getSpeed());
+                break; //se mueve hacia arriba
+            }
+            case 2: {
+
+                gatoBueno.setPosX(gatoBueno.getPosX() + gatoBueno.getSpeed());
+                break; //se mueve hacia la derecha
+            }
+            case 1: {
+
+                gatoBueno.setPosY(gatoBueno.getPosY() - gatoBueno.getSpeed());
+                break; //se mueve hacia abajo
+            }
+            case 4: {
+
+                gatoBueno.setPosX(gatoBueno.getPosX() - gatoBueno.getSpeed());
+                break; //se mueve hacia la izquierda
+            }
         }
 
         //Actualiza la animacion creada de los objetos
@@ -318,13 +341,7 @@ public AppletExamen1(){
                 
 
                 if (PAUSE) {
-                    
-
-                   
-                        g.setColor(Color.black);
-                        g.setFont(new Font("Avenir Black", Font.BOLD, 30));
-                        g.drawString("Dale click a la pantalla solo una vez", 250, 100);
-                        g.drawString("y Oprime 'P' para Comenzar/Pausar el juego!", 250, 150);
+                  
                         g.setFont(new Font("Avenir Black", Font.BOLD, 60));
                          g.setColor(Color.white);
                         g.drawString(gatoBueno.getPausado(), 400, 400);
@@ -345,7 +362,7 @@ public AppletExamen1(){
                     if(!crashed && (POINTSRetard<20)){
                     g.drawImage(gatoBueno.getImagenI(), gatoBueno.getPosX(), gatoBueno.getPosY(), this);
                     } else {
-                        g.drawImage(Chocan, gatoBueno.getPosX(), gatoBueno.getPosY(), this);
+                        g.drawString(gatoBueno.getGone(), gatoBueno.getPosX(), gatoBueno.getPosY());
                         POINTSRetard++;
                         if(POINTSRetard == 19){
                             crashed=false;
@@ -403,6 +420,23 @@ public AppletExamen1(){
 
     public void mouseClicked(MouseEvent e) {
 
+          if ((e.getX() < getWidth() / 2) && (e.getY() < getHeight() / 2)) {
+
+            CUADRANTE = 4;
+
+        } else if ((e.getX() >= (getWidth() / 2)) && (e.getY() < getHeight() / 2)) {
+
+            CUADRANTE = 1;
+
+        } else if ((e.getX() < getWidth() / 2) && (e.getY() >= getHeight() / 2)) {
+
+            CUADRANTE = 3;
+
+        } else {
+
+            CUADRANTE = 2;
+
+        }
     }
 
     public void mouseEntered(MouseEvent e) {
