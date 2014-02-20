@@ -22,7 +22,7 @@ import java.awt.event.MouseMotionListener;
 import java.net.URL;
 import java.util.LinkedList;
 import java.awt.Point;
-import javax.swing.JFrame;//
+import javax.swing.JFrame;// 
 
 public class AppletExamen1 extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
@@ -34,21 +34,23 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
     private SoundClip collide;    //Objeto AudioClip 
     private Bueno gatoBueno;    // Objeto de la clase Elefante
     private Malo perroMalo;   //Objeto de la clase Raton
+   //listas
     private LinkedList listaIzq;           //lista de perroMalos por la Izquierda
     private LinkedList listaDer;           //lista de perrosMalos por la derecha
+    
     private int cantidad;               //cantidadidad de perroMalos
-    private int mayor;
-    private int menor;
-    private int timeRetard;    //Contador temporalmente para imagen choque
+    private int timeRetard;    //Contador para retrazar aparicion de DESAPARECE
     private boolean IconPressed;
     private int coordenada_x;
     private int coordenada_y;
     private int off_x;
     private int off_y;
     private int VIDAS;
+    //imagenes
     private Image gameover;
     private Image background;
     private Image chocan;
+    
     private int direccion;
     private int posX;
     private int posY;
@@ -178,7 +180,7 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
      *
      */
     public void Actualiza() {
-
+        
         switch (CUADRANTE) {
             case 3: {
 
@@ -231,18 +233,19 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
             gatoBueno.setPosX(coordenada_x - off_x);
 
         }
-
+        //lista de Malos que se mueven de izq a derecha 
         for (int i = 0; i < listaIzq.size(); i++) {
             Malo perroMalo = (Malo) listaIzq.get(i);
             if (perroMalo.getPosY() < getHeight()) {
-                perroMalo.setPosX(perroMalo.getPosX() + perroMalo.getSpeed());       //se mueven de izq a derecha 
+                perroMalo.setPosX(perroMalo.getPosX() + perroMalo.getSpeed());       
             }
 
         }
+        //lista de Malos que se mueven de der a izq
         for (int i = 0; i < listaDer.size(); i++) {
             Malo perroMalo = (Malo) listaDer.get(i);
             if (perroMalo.getPosY() < getHeight()) {
-                perroMalo.setPosX(perroMalo.getPosX() - perroMalo.getSpeed());       //se mueven de der a izq
+                perroMalo.setPosX(perroMalo.getPosX() - perroMalo.getSpeed());       
             }
 
         }
@@ -260,15 +263,15 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
             gatoBueno.setPosY(0);
         }
 
-        if (gatoBueno.getPosY() + gatoBueno.getAlto() > getHeight()) {       //si se pasa del borde de abajo, la imagen se pone al raz
+        if (gatoBueno.getPosY() + gatoBueno.getAlto() > getHeight()) {       //si se pasa del borde de abajo
             gatoBueno.setPosY(getHeight() - gatoBueno.getAlto());
         }
 
-        if (gatoBueno.getPosX() < 0) {                             //si se pasa del borde de la izquierda, la imagen se ponse al raz
+        if (gatoBueno.getPosX() < 0) {                             //si se pasa del borde de la izquierda
             gatoBueno.setPosX(0);
         }
 
-        if (gatoBueno.getPosX() + gatoBueno.getAncho() > getWidth()) {      //si se pasa del borde de la derecha, la imagen se pone al raz
+        if (gatoBueno.getPosX() + gatoBueno.getAncho() > getWidth()) {      //si se pasa del borde de la derecha
             gatoBueno.setPosX(getWidth() - gatoBueno.getAncho());
         }
         //Listas encadenada de malos de Izq a Derecha
@@ -414,18 +417,15 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
             g.drawImage(gameover, -200, 0, this);
         }
     }
-
+   /*
+     *Metodo keyPressed
+     *Cuando una tecla esta apretada
+     *recibe de param un evento, en este caso se busca que sea la p
+     *para pausar el juego
+     */
     public void keyPressed(KeyEvent e) {
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-
-            direccion = 3; //Presiono flecha abajo
-
-        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-
-            direccion = 4; //Presiono flecha izquierda
-
-        } else if (e.getKeyCode() == KeyEvent.VK_P) {
+        if (e.getKeyCode() == KeyEvent.VK_P) {
 
             PAUSE = !PAUSE;
 
@@ -434,7 +434,7 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
 
     }
 
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent e) { //metodo cuando una tecla fue typeada
     }
 
     public void keyReleased(KeyEvent e) {
@@ -442,7 +442,12 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
         ACTION = false; //Presiono flecha arriba
 
     }
-
+    /*
+     *Metodo mouseClicked
+     *Cuando el mouse es apretado
+     *recibe de param un evento, que ayudara a definir donde fue picado
+     *dentro del applet
+     */
     public void mouseClicked(MouseEvent e) {
 
         if ((e.getX() < getWidth() / 2) && (e.getY() < getHeight() / 2)) {
@@ -484,7 +489,7 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
         }
     }
 
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {//metodo cuando el mouse es soltado
         IconPressed = false;
     }
 

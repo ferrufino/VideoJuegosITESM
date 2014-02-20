@@ -11,8 +11,8 @@ import java.awt.Toolkit;
 
 public class Malo extends Base {
 
-    private static int CONTEO;
-    private int SPEED;
+    private static int conteo;
+    private int speed;
 
     public Malo(int posX, int posY) {
         super(posX, posY);
@@ -28,28 +28,44 @@ public class Malo extends Base {
         animacion.sumaCuadro(malo3, 100);
         animacion.sumaCuadro(malo4, 100);
 
-        SPEED = (int) ((Math.random() * (3)) + 3);
+        speed = (int) ((Math.random() * (3)) + 3);
 
-        //CONTEO
+       
     }
 
-//Regresa el conteo del socre
+    /*
+     *Clase getConteo
+     *Sirve para regresar el conteo del score
+     * 
+     */
     public static int getConteo() {
-        return CONTEO;
+        return conteo;
     }
-//Establece o modifica el score/conteo
-
+    
+    /*
+     *Clase setConteo
+     *Sirve para definir el conteo
+     * recibe de parametro un entero
+     */
     public static void setConteo(int cont) {
-        CONTEO = cont;
+        conteo = cont;
     }
 
-    //Devuelve la velocidad
+    /*
+     *Clase setConteo
+     *Sirve para definir el conteo
+     * recibe de parametro un entero
+     */
     public int getSpeed() {
-        return SPEED;
+        return speed;
     }
 
-    //Define la velocidad
+     /*
+     *Clase setSpeed
+     *Sirve para definir la velocidad
+     * recibe de parametro un entero
+     */
     public void setSpeed(int cant) {
-        SPEED = cant;
+        speed = cant;
     }
 }
