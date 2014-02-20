@@ -6,6 +6,8 @@
 
 package javaframeexamen1;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author Ferrufino
@@ -18,7 +20,7 @@ public class JavaFrameExamen1 {
     public static void main(String[] args) {
         AppletExamen1 variable = new AppletExamen1();
         variable.setVisible(true);
-        variable.setSize(1000,1000);
+        variable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
 }

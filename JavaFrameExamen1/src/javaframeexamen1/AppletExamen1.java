@@ -29,7 +29,7 @@ import java.awt.event.MouseMotionListener;
 import java.net.URL;
 import java.util.LinkedList;
 import java.awt.Point;
-import javax.swing.JFrame;
+import javax.swing.JFrame;//
 
 public class AppletExamen1 extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
@@ -73,9 +73,9 @@ public class AppletExamen1 extends JFrame implements Runnable, KeyListener, Mous
     private boolean crashed;
     
 //constructor
-public void AppletExamen1(){
+public AppletExamen1(){
 
- 
+        setSize(1000,800);
         crashed=false;
         BEGIN = true;
         PAUSE = true;
@@ -130,7 +130,7 @@ public void AppletExamen1(){
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-        
+        /***/
        // Declaras un hilo
         Thread th = new Thread(this);
         // Empieza el hilo
